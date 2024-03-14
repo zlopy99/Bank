@@ -1,0 +1,75 @@
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+        <div class="container-fluid">
+            <button class="cta" (click)="goToHome()">
+                <span>Home</span>
+                <svg width="15px" height="10px" viewBox="0 0 13 10">
+                    <path d="M1,5 L11,5"></path>
+                    <polyline points="8 1 12 5 8 9"></polyline>
+                </svg>
+            </button>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="clientsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Clients
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="clientsDropdown">
+                            <li><a class="dropdown-item" (click)="openDialogForNewClient()">Open new client</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" routerLink="/clients">Clients overview</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="accountsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Accounts
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="accountsDropdown">
+                            <li><a class="dropdown-item" (click)="openDialogForNewAccount()">Open new account</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" routerLink="/accounts">Accounts overview</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="bankersDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Bankers
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="bankersDropdown">
+                            <li><a class="dropdown-item">Create new banker</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" routerLink="/bankers">Bankers overview</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="input-wrapper">
+                    <button class="icon" type="button" (click)="searchClient()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="25px"
+                            width="25px">
+                            <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="#fff"
+                                d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z">
+                            </path>
+                            <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="#fff"
+                                d="M22 22L20 20"></path>
+                        </svg>
+                    </button>
+                    <input placeholder="Search clients.." (keyup.enter)="searchClient()" class="input" name="text" type="text" [(ngModel)]="inputValue" #inputElement>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>

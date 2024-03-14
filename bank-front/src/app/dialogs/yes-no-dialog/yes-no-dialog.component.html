@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{ data.header }}</h2>
+<mat-dialog-content>
+    <p>{{ data.body }}</p>
+</mat-dialog-content>
+<mat-dialog-actions class="d-flex justify-content-center">
+    <button mat-raised-button (click)="dialogNo()">No</button>
+    <button mat-raised-button (click)="dialogYes()">Yes</button>
+  </mat-dialog-actions>

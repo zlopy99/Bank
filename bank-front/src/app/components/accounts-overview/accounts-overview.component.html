@@ -1,0 +1,97 @@
+<div class="content-container">
+    <div class="row d-flex justify-content-center">
+        <div class="col-8 mt-5 d-flex justify-content-center">
+            <div class="input-wrapper" style="width: 100%;">
+                <button class="icon" (click)="getAccounts()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="25px" width="25px">
+                        <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="#fff"
+                            d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z">
+                        </path>
+                        <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="#fff"
+                            d="M22 22L20 20"></path>
+                    </svg>
+                </button>
+                <input placeholder="Search accounts.." class="input" name="text" type="text" [(ngModel)]="inputValue"
+                    (keyup.enter)="getAccounts()">
+            </div>
+        </div>
+    </div>
+    <div *ngIf="showTable" class="row mt-5 d-flex justify-content-center">
+        <div class="col-10">
+            <mat-card>
+
+                <div class="example-table-container">
+                    <table mat-table [dataSource]="dataSourceAccount" matSort>
+
+                        <ng-container matColumnDef="id">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Account id </th>
+                            <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Account status </th>
+                            <td mat-cell *matCellDef="let row"> {{row.status}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Account name </th>
+                            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="accountTypeName">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Account type </th>
+                            <td mat-cell *matCellDef="let row"> {{row.accountTypeName}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="accountDetailCurrencyName">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Currency </th>
+                            <td mat-cell *matCellDef="let row"> {{row.accountDetailCurrencyName}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="accountDetailCurrencyAmount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+                            <td mat-cell *matCellDef="let row"> {{row.accountDetailCurrencyAmount}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="clientId">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Client id </th>
+                            <td mat-cell *matCellDef="let row"> {{row.clientId}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="clientName">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Client name </th>
+                            <td mat-cell *matCellDef="let row"> {{row.clientName}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="openingDate">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Opening date </th>
+                            <td mat-cell *matCellDef="let row"> {{row.openingDate}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="closingDate">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Closing date </th>
+                            <td mat-cell *matCellDef="let row"> {{row.closingDate}} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/clients/detail']"
+                            [queryParams]="{ clientId: row.clientId }" class="table-row-pick"></tr>
+
+                        <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                        </tr>
+                    </table>
+
+                    <div class="mat-paginator">
+                        <mat-form-field style="width: 50%;">
+                            <mat-label>Filter</mat-label>
+                            <input matInput (keyup)="applyFilter($event)" placeholder="Filter by..." #input>
+                        </mat-form-field>
+                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]"
+                            aria-label="Select page of users"></mat-paginator>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</div>

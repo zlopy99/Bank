@@ -1,0 +1,8 @@
+.table-row-pick {
+    cursor: pointer;
+}
+
+.table-row-pick:hover {
+    background-color: #eeeeee;
+    transition: 0.3s;
+}

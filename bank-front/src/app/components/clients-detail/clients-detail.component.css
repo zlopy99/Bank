@@ -1,0 +1,91 @@
+.content-container {
+    min-height: 76vh;
+    padding: 2rem;
+}
+
+.form-field-width {
+    width: 100%;
+}
+
+.content-col {
+    margin-right: 0.7rem;
+    padding: 0.7rem;
+}
+
+.card-header {
+    background-color: #b1dae7;
+    padding: 0.5rem;
+}
+
+td,
+th {
+    width: 10%;
+}
+
+.card-profile {
+    margin-top: 2rem;
+}
+
+.card-avatar {
+    display: flex;
+    justify-content: center;
+    background-color: #b1dae7;
+    height: 6rem;
+}
+
+.img {
+    width: 15%;
+    background: white;
+    border-radius: 50%;
+    margin-top: -2.5rem;
+    padding: 0.3rem;
+    box-shadow: 0px 4px 4px -2px rgba(0, 0, 0, 0.5);
+}
+
+.card-body {
+    margin-top: 1rem;
+}
+
+.client-name-display {
+    color: #c1c1c1;
+    font-family: sans-serif;
+}
+
+.mat-card-custom {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.mat-card-header-custom {
+    color: #c1c1c1;
+    font-family: sans-serif;
+}
+
+.example-table-container {
+    position: relative;
+    min-height: 32rem;
+    max-height: 32rem;
+    overflow-y: auto;
+}
+
+.mat-paginator {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    z-index: 1;
+    height: 6rem;
+}
+
+.client-account-content {
+    height: 100px;
+    overflow: auto;
+}
+
+.table-row-pick {
+    cursor: pointer;
+}
+
+.table-row-pick:hover {
+    background-color: #eeeeee;
+    transition: 0.3s;
+}

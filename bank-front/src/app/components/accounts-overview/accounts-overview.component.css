@@ -1,0 +1,117 @@
+.content-container {
+    min-height: 76vh;
+    padding: 2rem;
+}
+
+.content-col {
+    margin-right: 0.7rem;
+    padding: 0.7rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    height: 7rem;
+    width: 95%;
+    align-self: center;
+    margin-top: -2.3rem;
+    margin-bottom: 1rem;
+    background-color: #b1dae7;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    border: none;
+    box-shadow: 0px 4px 4px -2px rgba(0, 0, 0, 0.5);
+}
+
+table {
+    width: 100%;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+td,
+th {
+    width: 10%;
+}
+
+th {
+    background-color: #b1dae7 !important;
+    color: #234567 !important;
+}
+
+.example-table-container {
+    position: relative;
+    min-height: 24rem;
+    max-height: 34rem;
+    overflow: auto;
+}
+
+.mat-paginator {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    padding-top: 1rem;
+}
+
+.table-row-pick {
+    cursor: pointer;
+}
+
+.table-row-pick:hover {
+    background-color: #eeeeee;
+    transition: 0.3s;
+}
+
+/* Searchbar */
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    position: relative;
+}
+
+.input {
+    border-style: none;
+    height: 50px;
+    padding: 10px;
+    outline: none;
+    box-shadow: none;
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 3px solid #b1dae7;
+    color: #234567;
+}
+
+.input::placeholder,
+.input {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 17px;
+}
+
+.input::placeholder {
+    color: #b1dae7;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    cursor: pointer;
+    right: 0px;
+    width: 50px;
+    height: 50px;
+    border-style: none;
+    border-radius: 50%;
+    background-color: #b1dae7;
+    margin-bottom: 0.9rem;
+}

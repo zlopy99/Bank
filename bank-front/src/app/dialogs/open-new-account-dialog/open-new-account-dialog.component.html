@@ -1,0 +1,65 @@
+<div>
+    <h2 mat-dialog-title class="header-styling">{{ data.header }}</h2>
+    <mat-dialog-content>
+        <form [formGroup]="accountFormGroup">
+            <div class="row">
+                <div class="col-md-6">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Account name
+                        </mat-label>
+                        <input matInput type="text" formControlName="name">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Account type
+                        </mat-label>
+                        <mat-select formControlName="accountTypeId">
+                            @for (type of myAccountTypeList; track type) {
+                            <mat-option [value]="type.id">{{type.name}}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Money ammount
+                        </mat-label>
+                        <input matInput type="number" min="5" formControlName="accountDetailCurrencyAmmount">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Currency name
+                        </mat-label>
+                        <mat-select formControlName="accountDetailCurrencyId">
+                            @for (currency of myCurrencyList; track currency) {
+                            <mat-option [value]="currency.id">{{currency.name}}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Client Id
+                        </mat-label>
+                        <input matInput type="number" min="3" formControlName="clientId">
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+    <mat-dialog-actions class="d-flex justify-content-center">
+        <button type="button" mat-raised-button color="warn" (click)="closeDialog()">Close</button>
+        <button mat-raised-button color="primary" [disabled]="accountFormGroup.invalid" (click)="openAccount()">Open</button>
+    </mat-dialog-actions>
+</div>  

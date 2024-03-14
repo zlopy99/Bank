@@ -1,0 +1,14 @@
+package com.diplomski.bank.model.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class ResponseDto<T> {
+    private T object;
+    private Long clientId;
+    private String errorMessage;
+}

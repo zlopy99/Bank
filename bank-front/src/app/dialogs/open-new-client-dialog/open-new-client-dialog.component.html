@@ -1,0 +1,68 @@
+<div>
+    <h2 mat-dialog-title class="header-styling">{{ data.header }}</h2>
+    <mat-dialog-content>
+        <form [formGroup]="clientFormGroup">
+            <div class="row">
+                <div class="col-md-4">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Client name
+                        </mat-label>
+                        <input matInput type="text" formControlName="name">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Client last name
+                        </mat-label>
+                        <input matInput type="text" formControlName="lastName">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Client JMBG
+                        </mat-label>
+                        <input matInput type="text" maxlength="13" formControlName="jmbg">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>Date of birth</mat-label>
+                        <input (dateInput)="onDateChange($event)" matInput type="text" [matDatepicker]="picker"
+                            formControlName="dateOfBirth" [max]="currentDate" placeholder="yyyy-MM-dd">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Personal doc number
+                        </mat-label>
+                        <input matInput type="text" maxlength="9" formControlName="personalDocNumber">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Client sex
+                        </mat-label>
+                        <mat-select formControlName="sex">
+                            @for (sex of mySexList; track sex) {
+                            <mat-option [value]="sex.name">{{sex.name}}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+    <mat-dialog-actions class="d-flex justify-content-center">
+        <button type="button" mat-raised-button color="warn" (click)="closeDialog()">Close</button>
+        <button mat-raised-button color="primary" [disabled]="clientFormGroup.invalid" (click)="canContinue()">Continue</button>
+    </mat-dialog-actions>
+</div>  
