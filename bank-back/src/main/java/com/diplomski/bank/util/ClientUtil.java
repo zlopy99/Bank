@@ -25,14 +25,6 @@ public class ClientUtil {
         return LocalDate.parse(formattedDate);
     }
 
-    public static <T> Boolean checkIfAllElementsInListAreNotNull(List<T> listOfItems) {
-        for (T item : listOfItems) {
-            if (item != null)
-                return true;
-        }
-        return false;
-    }
-
     public static Set<AccountTypeDto> calculatePercentage(List<AccountTypeDto> accountTypeDtoList) {
         int allOpenedAccounts = accountTypeDtoList.size();
         Map<Long, Double> accountTypeDtoMap = new HashMap<>();

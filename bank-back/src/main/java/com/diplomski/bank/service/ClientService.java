@@ -6,6 +6,7 @@ import com.diplomski.bank.repository.*;
 import com.diplomski.bank.util.ClientStatusEnum;
 import com.diplomski.bank.util.ClientUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClientService {
     private final ClientRepository clientRepository;
     private final ClientDetailRepository clientDetailRepository;
@@ -34,19 +36,39 @@ public class ClientService {
     }
 
     private List<ClientDto> getClientByPersonalDocId(String value) {
-        return mapAndReturn(clientRepository.findClientByPersonalDocId(value));
+        try {
+            return mapAndReturn(clientRepository.findClientByPersonalDocId(value));
+        } catch (Exception e) {
+            log.error("Exception when finding client by personal document id, " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
     private List<ClientDto> getClientByJmbg(String value) {
-        return mapAndReturn(clientRepository.findClientByJmbg(value));
+        try {
+            return mapAndReturn(clientRepository.findClientByJmbg(value));
+        } catch (Exception e) {
+            log.error("Exception when finding client by JMBG, " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
     private List<ClientDto> getByIdOrClientName(String value) {
         if (value.matches("\\d+")) {
-            Long valueLong = Long.valueOf(value);
-            return mapAndReturn(clientRepository.findClientById(valueLong));
+            try {
+                Long valueLong = Long.valueOf(value);
+                return mapAndReturn(clientRepository.findClientById(valueLong));
+            } catch (Exception e) {
+                log.error("Exception when finding client by client ID, " + e.getMessage());
+                return Collections.emptyList();
+            }
         } else {
-            return mapAndReturn(clientRepository.findClientsByNameOrLastNameUsingLike(value));
+            try {
+                return mapAndReturn(clientRepository.findClientsByNameOrLastNameUsingLike(value));
+            } catch (Exception e) {
+                log.error("Exception when finding client by name, " + e.getMessage());
+                return Collections.emptyList();
+            }
         }
     }
 
@@ -67,6 +89,7 @@ public class ClientService {
             responseDto.setClientId(client.getId());
 
         } catch (Exception e) {
+            log.error("Exception when opening new client, " + e.getMessage());
             responseDto.setErrorMessage(e.getMessage());
         }
         return responseDto;
@@ -108,19 +131,24 @@ public class ClientService {
         ResponseDto<SaveClientDto> responseDto = new ResponseDto<>();
         SaveClientDto clientDetails = new SaveClientDto();
 
-        List<Client> clientById = clientRepository.findClientById(value);
+        try {
+            List<Client> clientById = clientRepository.findClientById(value);
 
-        if (clientById.isEmpty()) {
-            responseDto.setErrorMessage(CLIENT_DOES_NOT_EXIST);
-            return responseDto;
+            if (clientById.isEmpty()) {
+                responseDto.setErrorMessage(CLIENT_DOES_NOT_EXIST);
+                return responseDto;
+            }
+
+            modelMapper.map(clientById.get(0), clientDetails);
+            modelMapper.map(clientById.get(0).getClientDetail(), clientDetails);
+            clientDetails.setOpenAccountDtoList(getMappedAccounts(clientById.get(0).getAccounts()));
+
+            responseDto.setObject(clientDetails);
+            responseDto.setClientId(value);
+
+        } catch (Exception e) {
+            log.error("Exception when retriving client details, " + e.getMessage());
         }
-
-        modelMapper.map(clientById.get(0), clientDetails);
-        modelMapper.map(clientById.get(0).getClientDetail(), clientDetails);
-        clientDetails.setOpenAccountDtoList(getMappedAccounts(clientById.get(0).getAccounts()));
-
-        responseDto.setObject(clientDetails);
-        responseDto.setClientId(value);
 
         return responseDto;
     }
@@ -133,9 +161,9 @@ public class ClientService {
 
     public ResponseDto<String> editClient(SaveClientDto saveClientDto, Long clientId) {
         ResponseDto<String> responseDto = new ResponseDto<>();
-        LocalDate currentLocalDate = ClientUtil.getCurrentLocalDate();
 
         try {
+            LocalDate currentLocalDate = ClientUtil.getCurrentLocalDate();
             List<Client> clientList = clientRepository.findClientById(clientId);
             Client client = clientList.get(0);
 
@@ -150,6 +178,7 @@ public class ClientService {
             responseDto.setClientId(clientId);
 
         } catch (Exception e) {
+            log.error("Exception when editing client, " + e.getMessage());
             responseDto.setErrorMessage(e.getMessage());
         }
 
@@ -158,9 +187,9 @@ public class ClientService {
 
     public ResponseDto<String> deleteClient(Long clientId) {
         ResponseDto<String> responseDto = new ResponseDto<>();
-        LocalDate currentLocalDate = ClientUtil.getCurrentLocalDate();
 
         try {
+            LocalDate currentLocalDate = ClientUtil.getCurrentLocalDate();
             List<Client> clientById = clientRepository.findClientById(clientId);
             clientById.get(0).setStatus(ClientStatusEnum.CLOSED.getShortFlag());
             clientById.get(0).setClosingDate(currentLocalDate);
@@ -171,6 +200,7 @@ public class ClientService {
             responseDto.setClientId(save.getId());
 
         } catch (Exception e) {
+            log.error("Exception when closing client, " + e.getMessage());
             responseDto.setErrorMessage(e.getMessage());
         }
 
@@ -190,9 +220,9 @@ public class ClientService {
 
     public ResponseDto<String> reopenClient(ClientDto clientDto) {
         ResponseDto<String> responseDto = new ResponseDto<>();
-        LocalDate currentLocalDate = ClientUtil.getCurrentLocalDate();
 
         try {
+            LocalDate currentLocalDate = ClientUtil.getCurrentLocalDate();
             List<Client> clientById = clientRepository.findClientById(clientDto.getId());
             clientById.get(0).setStatus(ClientStatusEnum.ACTIVE.getShortFlag());
             clientById.get(0).setClosingDate(null);
@@ -203,6 +233,7 @@ public class ClientService {
             responseDto.setClientId(save.getId());
 
         } catch (Exception e) {
+            log.error("Exception when reopening client, " + e.getMessage());
             responseDto.setErrorMessage(e.getMessage());
         }
 
