@@ -5,6 +5,7 @@ import com.diplomski.bank.model.dto.*;
 import com.diplomski.bank.repository.*;
 import com.diplomski.bank.util.ClientStatusEnum;
 import com.diplomski.bank.util.ClientUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -17,6 +18,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
     private final ClientDetailRepository clientDetailRepository;

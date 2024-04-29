@@ -1,6 +1,5 @@
 package com.diplomski.bank.controller;
 
-import com.diplomski.bank.model.ClientDetail;
 import com.diplomski.bank.model.dto.*;
 import com.diplomski.bank.service.ClientService;
 import com.diplomski.bank.service.RedisDataLoader;
@@ -17,7 +16,7 @@ public class ClientController {
     private final ClientService clientService;
     private final RedisDataLoader redis;
 
-    @GetMapping("firstFive")
+    @GetMapping("/firstFive")
     public ResponseEntity<ClientAccountDto> getFirstFiveClientsAndAccounts() {
         return ResponseEntity.ok(redis.getFirstFiveClientsAndAccounts());
     }
