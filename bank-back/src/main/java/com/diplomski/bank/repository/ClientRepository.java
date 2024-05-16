@@ -30,14 +30,14 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query(value = """
             select * from public.client
             where opening_date >= date_trunc('week', current_date - interval '1 week')
-            and opening_date < date_trunc('week', current_date)
+            and opening_date < date_trunc('day', current_date + interval '1 day')
             """, nativeQuery = true)
     List<Client> getAllClientsOfLastWeekOpened();
 
     @Query(value = """
             select * from public.client
             where closing_date >= date_trunc('week', current_date - interval '1 week')
-            and closing_date < date_trunc('week', current_date)
+            and closing_date < date_trunc('day', current_date + interval '1 day')
             """, nativeQuery = true)
     List<Client> getAllClientsOfLastWeekClosed();
 

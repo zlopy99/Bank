@@ -5,6 +5,7 @@ import com.diplomski.bank.util.RolesEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final MyUserDetailService myUserDetailService;
     private final JwtAuthFilter jwtAuthFilter;
+    private final ExceptionHandlingFilter exceptionHandlingFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,24 +34,40 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/api/auth/login", "/api/auth/refreshToken").permitAll();
+                    registry.requestMatchers(
+                            "/api/auth/login",
+                            "/api/auth/refreshToken",
+                            "/api/client/firstFive",
+                            "/api/client/lastWeekClients",
+                            "/api/client/yearlyClients",
+                            "/api/account/lastMonthAccounts"
+                    ).permitAll();
+                    registry.requestMatchers(
+                            HttpMethod.GET,
+                            "/api/client/details/**",
+                            "/api/client/countries/**"
+                    ).hasAnyAuthority(
+                            RolesEnum.ADMIN.getName(),
+                            RolesEnum.BANKER_OBSERVE.getName(),
+                            RolesEnum.BANKER_CLIENT.getName(),
+                            RolesEnum.BANKER_ACCOUNT.getName()
+                    );
                     registry.requestMatchers("/api/client/**").hasAnyAuthority(
                             RolesEnum.ADMIN.getName(),
                             RolesEnum.BANKER_OBSERVE.getName(),
-                            RolesEnum.BANKER_CLIENT.getName(),
-                            RolesEnum.BANKER_ACCOUNT.getName()
+                            RolesEnum.BANKER_CLIENT.getName()
                     );
-                    registry.requestMatchers("/api/accounts/**").hasAnyAuthority(
+                    registry.requestMatchers("/api/account/**").hasAnyAuthority(
                             RolesEnum.ADMIN.getName(),
                             RolesEnum.BANKER_OBSERVE.getName(),
-                            RolesEnum.BANKER_CLIENT.getName(),
                             RolesEnum.BANKER_ACCOUNT.getName()
                     );
-                    registry.requestMatchers("/api/user").hasAuthority(RolesEnum.ADMIN.getName());
+                    registry.requestMatchers("/api/user/**").hasAuthority(RolesEnum.ADMIN.getName());
                     registry.anyRequest().authenticated();
                 })
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlingFilter, JwtAuthFilter.class)
                 .build();
     }
 

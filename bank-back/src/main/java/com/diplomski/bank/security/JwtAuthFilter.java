@@ -1,12 +1,15 @@
 package com.diplomski.bank.security;
 
+import com.diplomski.bank.exception.CustomeExpiredJwtException;
 import com.diplomski.bank.service.MyUserDetailService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +25,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Order(2)
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final MyUserDetailService myUserDetailService;
     private final JwtUtil jwtUtil;
@@ -36,7 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String userEmail;
         final String jwtToken;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ") || request.getRequestURI().contains("/refreshToken")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,6 +59,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         } catch (UsernameNotFoundException e) {
             log.error("Username not found. ", e);
+        } catch (ExpiredJwtException e) {
+            log.error("Expired token. ");
+            throw new CustomeExpiredJwtException(e.getMessage());
         } catch (Exception e) {
             log.error("Unexpected exception. ", e);
         }

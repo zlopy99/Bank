@@ -26,7 +26,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query(value = """
             select * from public.account
             where opening_date >= date_trunc('month', current_date - interval '1 month')
-            and opening_date < date_trunc('month', current_date)
+            and opening_date < date_trunc('day', current_date + interval '1 day')
             """, nativeQuery = true)
     List<Account> getAllAccountsOfLastMonth();
 }

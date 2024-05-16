@@ -121,9 +121,19 @@ public class AuthenticationService {
                 refreshTokenRepository.deleteByToken(refreshToken);
             String expiredToken = "Expired token. ";
             log.error(expiredToken, e);
-            throw new ApiRequestException(expiredToken + e.getMessage());
         } catch (Exception e) {
             String unexpectedException = "Unexpected exception. ";
+            log.error(unexpectedException, e);
+            throw new ApiRequestException(unexpectedException + e.getMessage());
+        }
+    }
+
+    public void logout(String refreshToken) {
+        try {
+            refreshTokenRepository.deleteByToken(refreshToken);
+
+        } catch (Exception e) {
+            String unexpectedException = "Exception when trying to delete refresh token. ";
             log.error(unexpectedException, e);
             throw new ApiRequestException(unexpectedException + e.getMessage());
         }

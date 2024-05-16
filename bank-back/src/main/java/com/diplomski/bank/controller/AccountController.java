@@ -40,7 +40,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.reOpenAccount(id));
     }
 
-    @GetMapping("lastMonthAccounts")
+    @GetMapping("/lastMonthAccounts")
     public ResponseEntity<Set<AccountTypeDto>> getAllAccountsOpenedLastMonth() {
         return ResponseEntity.ok(redis.getAllAccountsOpenedLastMonth());
     }

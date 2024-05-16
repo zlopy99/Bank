@@ -50,7 +50,7 @@ public class JwtUtil {
                 .setSubject(userDetails.getUsername())
                 .claim("authorities", userDetails.getAuthorities())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1)))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15)))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }

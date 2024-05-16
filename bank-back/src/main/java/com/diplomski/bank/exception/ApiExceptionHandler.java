@@ -23,4 +23,17 @@ public class ApiExceptionHandler {
 
         return new ResponseEntity<>(apiExceptionDto, badRequest);
     }
+
+    @ExceptionHandler(value = {CustomeExpiredJwtException.class})
+    public ResponseEntity<Object> handleExpiredJwtException(CustomeExpiredJwtException e) {
+        HttpStatus badRequest = HttpStatus.UNAUTHORIZED;
+
+        ApiExceptionDto apiExceptionDto = new ApiExceptionDto(
+                e.getMessage(),
+                badRequest,
+                ZonedDateTime.now(ZoneId.of("Europe/Sarajevo"))
+        );
+
+        return new ResponseEntity<>(apiExceptionDto, badRequest);
+    }
 }
