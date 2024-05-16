@@ -16,12 +16,13 @@ import { AccountsOverviewComponent } from './components/accounts-overview/accoun
 import { FormsModule } from '@angular/forms';
 import { ClientsDetailComponent } from './components/clients-detail/clients-detail.component';
 import { BankersOverviewComponent } from './components/bankers-overview/bankers-overview.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { OpenNewClientDialogComponent } from './dialogs/open-new-client-dialog/open-new-client-dialog.component';
 import { OpenNewClientDetailDialogComponent } from './dialogs/open-new-client-detail-dialog/open-new-client-detail-dialog.component';
 import { YesNoDialogComponent } from './dialogs/yes-no-dialog/yes-no-dialog.component';
 import { OpenNewAccountDialogComponent } from './dialogs/open-new-account-dialog/open-new-account-dialog.component';
 import { LoginComponent } from './components/login/login.component';
+import { TokenInterceptor } from './services/user/token.interceptor';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,14 @@ import { LoginComponent } from './components/login/login.component';
     FormsModule,
     HttpClientModule
   ],
-  providers: [ChartService],
+  providers: [
+    ChartService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

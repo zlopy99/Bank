@@ -9,6 +9,8 @@ import { ClientServiceApi } from '../../services/client/client-api.service';
 import { OpenNewAccountDialogComponent } from '../../dialogs/open-new-account-dialog/open-new-account-dialog.component';
 import { OpenAccountDto } from '../../util-components/dto/dto-interfaces';
 import { AccountApiService } from '../../services/account/account-api.service';
+import { UserApiService } from '../../services/user/user-api.service';
+import { UserService } from '../../services/user/user.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -22,13 +24,20 @@ export class NavBarComponent implements OnDestroy {
   firstPartOfInfo: any = null;
   secondPartOfInfo: any = null;
   openAccountDto!: OpenAccountDto;
+  userPathVisibilityAccount!: boolean;
+  userPathVisibilityClient!: boolean;
+  userPathVisibilityAdmin!: boolean;
 
   constructor(
     private router: Router,
     public dialog: MatDialog,
     private _clientServiceApi: ClientServiceApi,
-    private _accountServiceApi: AccountApiService
-  ) { }
+    private _accountServiceApi: AccountApiService,
+    private _userApiService: UserApiService,
+    private _userService: UserService
+  ) {
+    this.setUserPathVisibility();
+   }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -168,5 +177,15 @@ export class NavBarComponent implements OnDestroy {
           console.error(err);
         }
       });
+  }
+
+  logout() {
+    this._userService.logout();
+  }
+
+  setUserPathVisibility() {
+    this.userPathVisibilityAccount = this._userService.checkRoleForAccount();
+    this.userPathVisibilityClient = this._userService.checkRoleForClient();
+    this.userPathVisibilityAdmin = this._userService.checkRoleForBanker();
   }
 }

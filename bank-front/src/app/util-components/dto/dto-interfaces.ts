@@ -113,3 +113,8 @@ export interface ClientsAccountsCountDto {
     count: number;
     statusType: string;
 }
+
+export interface LoginRequestDto {
+    email: string;
+    password: string;
+}

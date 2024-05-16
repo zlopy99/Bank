@@ -6,16 +6,18 @@ import { AccountsOverviewComponent } from '../components/accounts-overview/accou
 import { ClientsDetailComponent } from '../components/clients-detail/clients-detail.component';
 import { BankersOverviewComponent } from '../components/bankers-overview/bankers-overview.component';
 import { LoginComponent } from '../components/login/login.component';
+import { authGuardGuard } from '../services/guard/auth-guard.guard';
+import { isValueDefined } from '../util-components/util-methods/util-methods';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
-  { path: 'clients', component: ClientsOverviewComponent },
-  { path: 'clients/detail', component: ClientsDetailComponent },
-  { path: 'accounts', component: AccountsOverviewComponent },
-  { path: 'bankers', component: BankersOverviewComponent },
+  { path: 'home', component: HomeComponent, canActivate: [authGuardGuard] },
+  { path: 'clients', component: ClientsOverviewComponent, canActivate: [authGuardGuard] },
+  { path: 'clients/detail', component: ClientsDetailComponent, canActivate: [authGuardGuard] },
+  { path: 'accounts', component: AccountsOverviewComponent, canActivate: [authGuardGuard] },
+  { path: 'bankers', component: BankersOverviewComponent, canActivate: [authGuardGuard] },
   { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: isValueDefined(localStorage.getItem('access_token')) ? '/home' : '/login'}
 ];
 
 @NgModule({

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { enviroment } from '../../enviroment';
-import { AccountTypeDto, CityDto, ClientAccountDto, ClientDto, ClientsAccountsCountDto, ClientsInLastWeekDto, CountryDto, ResponseDto, SaveClientDataDto } from '../../util-components/dto/dto-interfaces';
+import { CityDto, ClientAccountDto, ClientDto, ClientsAccountsCountDto, ClientsInLastWeekDto, CountryDto, ResponseDto, SaveClientDataDto } from '../../util-components/dto/dto-interfaces';
 
 @Injectable({
   providedIn: 'root'

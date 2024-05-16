@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { YesNoDialogComponent } from '../../dialogs/yes-no-dialog/yes-no-dialog.component';
 import { AccountApiService } from '../../services/account/account-api.service';
 import { OpenNewAccountDialogComponent } from '../../dialogs/open-new-account-dialog/open-new-account-dialog.component';
+import { UserService } from '../../services/user/user.service';
 
 
 @Component({
@@ -49,6 +50,9 @@ export class ClientsDetailComponent implements OnInit {
   }
   checkList: number[] = [];
   currentDate = new Date();
+  clientRole!: boolean;
+  clientObserverRole!: boolean;
+  accountRole!: boolean;
 
   setPaginatorAndSort() {
     this.dataSourceAccount.paginator = this.paginator;
@@ -57,11 +61,13 @@ export class ClientsDetailComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private _clientServiceApi: ClientServiceApi,
     private fb: FormBuilder,
     private datePipe: DatePipe,
     public dialog: MatDialog,
-    private _accountApiService: AccountApiService
+    private _accountApiService: AccountApiService,
+    private _userService: UserService
   ) {
     this.clientFormGroup = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -80,6 +86,8 @@ export class ClientsDetailComponent implements OnInit {
       mobileNumber: ['', [Validators.required, Validators.minLength(9)]],
       email: ['', [Validators.required, Validators.email]],
     });
+
+    this.getAndSetUserRoles();
   }
 
   ngOnInit() {
@@ -104,7 +112,7 @@ export class ClientsDetailComponent implements OnInit {
   }
 
   chechFormsForDisabeling() {
-    if (this.clientStatus === 'CLOSED') {
+    if (this.clientStatus === 'CLOSED' || !this.clientRole) {
       this.clientFormGroup.get('name')?.disable();
       this.clientFormGroup.get('lastName')?.disable();
       this.clientFormGroup.get('dateOfBirth')?.disable();
@@ -137,6 +145,7 @@ export class ClientsDetailComponent implements OnInit {
       this.clientFormGroup.get('mobileNumber')?.enable();
       this.clientFormGroup.get('email')?.enable();
     }
+
     this.onContactChange();
   }
 
@@ -197,14 +206,14 @@ export class ClientsDetailComponent implements OnInit {
   displayCounteries(option: CountryDto): string {
     if (typeof option === 'string')
       return option;
-    this.countryId = option.id;
-    return option.name ?? '';
+    this.countryId = option?.id;
+    return option?.name ?? '';
   }
   displayCities(option: CityDto): string {
     if (typeof option === 'string')
       return option;
-    this.cityId = option.id;
-    return option.name ?? '';
+    this.cityId = option?.id;
+    return option?.name ?? '';
   }
 
   applyFilter(event: Event) {
@@ -559,5 +568,16 @@ export class ClientsDetailComponent implements OnInit {
           console.error(err);
         }
       });
+  }
+
+  getAndSetUserRoles() {
+    this.clientRole = this._userService.checkIfUserHasRole('BANKER_CLIENT');
+    this.clientObserverRole = this._userService.checkIfUserHasRole('BANKER_OBSERVE');
+    this.accountRole = this._userService.checkIfUserHasRole('BANKER_ACCOUNT');
+  }
+
+  goToAccounts(row: any) {
+    if (this.accountRole)
+      this.router.navigate(['/accounts'], { queryParams: { clientId: row.clientId } });
   }
 }
