@@ -176,7 +176,7 @@
                                     client</button>
                                 <div>
                                     <button style="margin-right: 0.5rem;" mat-raised-button color="primary" (click)="openNewAccount()"
-                                        [disabled]="(!clientFormGroup.valid || clientStatus === 'CLOSED' || clientRole) && !accountRole"
+                                        [disabled]="isOpenAccountDisabeld()"
                                         type="button">Open account</button>
                                     <button mat-raised-button color="primary" (click)="editClient()"
                                         [disabled]="!clientFormGroup.valid || clientStatus === 'CLOSED' || !clientRole"

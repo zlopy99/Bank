@@ -1,0 +1,130 @@
+<div class="content-container">
+    <div class="row d-flex justify-content-center">
+        <div *ngIf="userOriginalData" class="col-lg-7">
+            <mat-card class="card-profile">
+
+                <!-- Banker image -->
+                <div class="card-avatar">
+                    <img class="img" [src]="userImage" />
+                </div>
+                <mat-card-content class="example-table-container">
+                    <div class="card-body">
+                        <form [formGroup]="formGroup">
+
+                            <!-- Banker info -->
+                            <div class="col-lg-12 d-flex justify-content-center">
+                                <mat-card class="mat-card-custom">
+                                    <mat-card-header>
+                                        <h2 class="mat-card-header-custom">Personal info</h2>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <mat-form-field class="form-field-width">
+                                                    <mat-label>User name</mat-label>
+                                                    <input matInput placeholder="Client name..."
+                                                        formControlName="userName">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <mat-form-field class="form-field-width">
+                                                    <mat-label>Email</mat-label>
+                                                    <input matInput placeholder="Client last name..."
+                                                        formControlName="email">
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <mat-form-field class="form-field-width">
+                                                    <mat-label>Password change</mat-label>
+                                                    <input matInput placeholder="Client name..."
+                                                        formControlName="passwordChange">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <mat-card class="form-field-width mt-3">
+                                                    <input type="file" formControlName="image"
+                                                        (change)="onFileChange($event)">
+                                                </mat-card>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <button mat-mini-fab [color]="isClicked ? 'warn' : 'none'" class="mt-3"
+                                                    (click)="deletePicture(isClicked)"
+                                                    [matTooltip]="isClicked ? 'Cancle delete' : 'Click if you want to delete image'">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <mat-form-field class="form-field-width">
+                                                    <mat-label>
+                                                        Role
+                                                    </mat-label>
+                                                    <mat-select formControlName="roles" multiple>
+                                                        @for (role of roleList; track role) {
+                                                        <mat-option [value]="role">{{role.name}}</mat-option>
+                                                        }
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                    <mat-card-actions class="mt-3 d-flex justify-content-between">
+                                        <div>
+                                            <button [disabled]="!formGroup.valid" color="primary" mat-flat-button (click)="editBanker()">
+                                                Edit banker
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button color="accent" mat-mini-fab matTooltip="Reset to default"
+                                                (click)="resetToDefault()">
+                                                <mat-icon>undo</mat-icon>
+                                            </button>
+                                        </div>
+                                    </mat-card-actions>
+                                </mat-card>
+                            </div>
+                        </form>
+                        <div class="col-lg-12 d-flex justify-content-center">
+                            <mat-card class="mat-card-custom">
+                                <mat-card-header>
+                                    <h2 class="mat-card-header-custom">Bankers actions</h2>
+                                </mat-card-header>
+                                <mat-card-actions class="mt-3 d-flex">
+                                    <div style="margin-right: 0.5rem;">
+                                        <button [color]="clientOrAccountLogs ? 'primary' : 'none'" mat-flat-button (click)="changeLog()">
+                                            Client
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button [color]="clientOrAccountLogs ? 'none' : 'primary'" mat-flat-button (click)="changeLog()">
+                                            Account
+                                        </button>
+                                    </div>
+                                </mat-card-actions>
+
+                                <!-- Bankers actions on client and account -->
+                                <div>
+                                    <ng-container *ngTemplateOutlet="clientOrAccountLogs ? clientLog : accountLog"></ng-container>
+                                </div>
+                                <ng-template #clientLog>
+                                    <div class="mt-4">
+                                        <h1>User client actions</h1>
+                                        <app-client-log [userEmail]="userOriginalData.email"></app-client-log>
+                                    </div>
+                                </ng-template>
+                                <ng-template #accountLog>
+                                    <div class="mt-4">
+                                        <h1>User account actions</h1>
+                                        <app-account-log [userEmail]="userOriginalData.email"></app-account-log>
+                                    </div>
+                                </ng-template>
+
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

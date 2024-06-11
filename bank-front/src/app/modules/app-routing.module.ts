@@ -8,6 +8,7 @@ import { BankersOverviewComponent } from '../components/bankers-overview/bankers
 import { LoginComponent } from '../components/login/login.component';
 import { authGuardGuard } from '../services/guard/auth-guard.guard';
 import { isValueDefined } from '../util-components/util-methods/util-methods';
+import { BankerDetailComponent } from '../components/banker-detail/banker-detail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'clients/detail', component: ClientsDetailComponent, canActivate: [authGuardGuard] },
   { path: 'accounts', component: AccountsOverviewComponent, canActivate: [authGuardGuard] },
   { path: 'bankers', component: BankersOverviewComponent, canActivate: [authGuardGuard] },
+  { path: 'bankers/detail', component: BankerDetailComponent, canActivate: [authGuardGuard] },
   { path: 'login', component: LoginComponent },
   { path: '**', redirectTo: isValueDefined(localStorage.getItem('access_token')) ? '/home' : '/login'}
 ];

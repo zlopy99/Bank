@@ -53,6 +53,7 @@ export class ClientsDetailComponent implements OnInit {
   clientRole!: boolean;
   clientObserverRole!: boolean;
   accountRole!: boolean;
+  adminRole!: boolean;
 
   setPaginatorAndSort() {
     this.dataSourceAccount.paginator = this.paginator;
@@ -574,10 +575,19 @@ export class ClientsDetailComponent implements OnInit {
     this.clientRole = this._userService.checkIfUserHasRole('BANKER_CLIENT');
     this.clientObserverRole = this._userService.checkIfUserHasRole('BANKER_OBSERVE');
     this.accountRole = this._userService.checkIfUserHasRole('BANKER_ACCOUNT');
+    this.adminRole = this._userService.checkIfUserHasRole('ADMIN');
   }
 
   goToAccounts(row: any) {
     if (this.accountRole)
       this.router.navigate(['/accounts'], { queryParams: { clientId: row.clientId } });
+  }
+
+  isOpenAccountDisabeld() {
+    if (!this.clientFormGroup.valid || this.clientStatus === 'CLOSED')
+      return true;
+    else if (this.adminRole)
+      return false;
+    else return !this.accountRole;
   }
 }

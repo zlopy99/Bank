@@ -1,68 +1,51 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-
-export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  fruit: string;
-}
-
-/** Constants used to fill up our data base. */
-const FRUITS: string[] = [
-  'blueberry',
-  'lychee',
-  'kiwi',
-  'mango',
-  'peach',
-  'lime',
-  'pomegranate',
-  'pineapple',
-];
-const NAMES: string[] = [
-  'Maia',
-  'Asher',
-  'Olivia',
-  'Atticus',
-  'Amelia',
-  'Jack',
-  'Charlotte',
-  'Theodore',
-  'Isla',
-  'Oliver',
-  'Isabella',
-  'Jasper',
-  'Cora',
-  'Levi',
-  'Violet',
-  'Arthur',
-  'Mia',
-  'Thomas',
-  'Elizabeth',
-];
+import { UserApiService } from '../../services/user/user-api.service';
+import { UserService } from '../../services/user/user.service';
+import { UserDto } from '../../util-components/dto/dto-interfaces';
+import { Subject, takeUntil } from 'rxjs';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { isValueDefined } from '../../util-components/util-methods/util-methods';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-bankers-overview',
   templateUrl: './bankers-overview.component.html',
   styleUrl: './bankers-overview.component.css'
 })
-export class BankersOverviewComponent implements AfterViewInit{
-  displayedColumns: string[] = ['id', 'name', 'progress', 'fruit'];
-  dataSource: MatTableDataSource<UserData>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+export class BankersOverviewComponent implements OnDestroy {
+  userColumns: string[] = ['id', 'name', 'email', 'image'];
+  USER_DATA: UserDto[] = [];
+  dataSource: MatTableDataSource<UserDto> = new MatTableDataSource(this.USER_DATA);
+  private paginator!: MatPaginator;
+  private sort!: MatSort;
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.setPaginatorAndSort();
+  }
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.setPaginatorAndSort();
+  }
+  private unsubscribe$ = new Subject<void>();
+  imageUrl!: SafeUrl;
+  inputValue!: string;
 
-  constructor() {
-    // Create 100 users
-    const users = Array.from({ length: 100 }, (_, k) => createNewUser(k + 1));
+  constructor(
+    private _userApiService: UserApiService,
+    private _userService: UserService,
+    private sanitizer: DomSanitizer,
+    private router: Router
+  ) {}
 
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(users);
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
-  ngAfterViewInit() {
+  setPaginatorAndSort() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
@@ -75,20 +58,35 @@ export class BankersOverviewComponent implements AfterViewInit{
       this.dataSource.paginator.firstPage();
     }
   }
-}
 
-/** Builds and returns a new User. */
-function createNewUser(id: number): UserData {
-  const name =
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))] +
-    ' ' +
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) +
-    '.';
+  getAllUsers() {
+    this._userApiService.getAllUsers(this.inputValue ?? null)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe({
+      next: async (resp) => {
+        this.USER_DATA = await this.setUpImagesForUsers(resp);
+        this.dataSource = new MatTableDataSource(this.USER_DATA);
 
-  return {
-    id: id.toString(),
-    name: name,
-    progress: Math.round(Math.random() * 100).toString(),
-    fruit: FRUITS[Math.round(Math.random() * (FRUITS.length - 1))],
-  };
+      }, error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
+  async setUpImagesForUsers(users: UserDto[]) {
+    users.forEach(user => {
+      if (isValueDefined(user.image)) {
+        const objectURL = `data:image/jpeg;base64,${user.image}`;
+        user.image = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      }
+      return user;
+    });
+
+    return users;
+  }
+
+  goToBankerDetails(userId: any) {
+    console.log(userId);
+    this.router.navigate(['/bankers/detail'], { queryParams: { userId: userId } });
+  }
 }

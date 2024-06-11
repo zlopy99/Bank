@@ -1,0 +1,50 @@
+<div class="example-table-container">
+    <table mat-table [dataSource]="dataSource" matSort>
+
+        <ng-container matColumnDef="userEmail">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+            <td mat-cell *matCellDef="let row"> {{row.userEmail}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="logDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Log date </th>
+            <td mat-cell *matCellDef="let row"> {{row.logDate}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="clientId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Client id </th>
+            <td mat-cell *matCellDef="let row"> {{row.clientId}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="clientName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Client name </th>
+            <td mat-cell *matCellDef="let row"> {{row.clientName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Last name </th>
+            <td mat-cell *matCellDef="let row"> {{row.clientLastName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+            <td mat-cell *matCellDef="let row"> {{row.action}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="userColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: userColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">User dos not have any actions.</td>
+        </tr>
+    </table>
+
+    <div class="mat-paginator">
+        <mat-form-field style="width: 50%;">
+            <mat-label>Filter</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Filter by..." #input>
+        </mat-form-field>
+        <mat-paginator [pageSizeOptions]="[5, 10, 15, 20]"
+            aria-label="Select page of users"></mat-paginator>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+<div>
+    <h2 mat-dialog-title class="header-styling">{{ data.header }}</h2>
+    <mat-dialog-content>
+        <form [formGroup]="bankerFormGroup">
+            <div class="row">
+                <div class="col-md-6">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Name
+                        </mat-label>
+                        <input matInput type="text" formControlName="name">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Email
+                        </mat-label>
+                        <input matInput type="text" formControlName="email">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Password
+                        </mat-label>
+                        <input matInput type="password" min="6" formControlName="password">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field class="form-field-width">
+                        <mat-label>
+                            Role
+                        </mat-label>
+                        <mat-select formControlName="roles" multiple>
+                            @for (role of roleList; track role) {
+                            <mat-option [value]="role">{{role.name}}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <mat-card class="form-field-width">
+                        <input type="file" formControlName="imageFile" (change)="onFileChange($event)">
+                    </mat-card>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+    <mat-dialog-actions class="d-flex justify-content-center">
+        <button type="button" mat-raised-button color="warn" (click)="closeDialog()">Close</button>
+        <button mat-raised-button color="primary" [disabled]="bankerFormGroup.invalid" (click)="openBanker()">Open</button>
+    </mat-dialog-actions>
+</div>  

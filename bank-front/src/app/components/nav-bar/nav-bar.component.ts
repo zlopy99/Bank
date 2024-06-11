@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angu
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { OpenNewClientDialogComponent } from '../../dialogs/open-new-client-dialog/open-new-client-dialog.component';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, firstValueFrom, takeUntil } from 'rxjs';
 import { isValueDefined } from '../../util-components/util-methods/util-methods';
 import { OpenNewClientDetailDialogComponent } from '../../dialogs/open-new-client-detail-dialog/open-new-client-detail-dialog.component';
 import { ClientServiceApi } from '../../services/client/client-api.service';
@@ -11,6 +11,7 @@ import { OpenAccountDto } from '../../util-components/dto/dto-interfaces';
 import { AccountApiService } from '../../services/account/account-api.service';
 import { UserApiService } from '../../services/user/user-api.service';
 import { UserService } from '../../services/user/user.service';
+import { OpenNewBankerDialogComponent } from '../../dialogs/open-new-banker-dialog/open-new-banker-dialog.component';
 
 @Component({
   selector: 'app-nav-bar',
@@ -146,6 +147,37 @@ export class NavBarComponent implements OnDestroy {
       streetName: this.secondPartOfInfo.streetName,
       streetNumber: this.secondPartOfInfo.streetNumber
     }
+  }
+
+  openDialogForNewBanker() {
+    const dialogRef = this.dialog.open(OpenNewBankerDialogComponent, {
+      data: { header: 'Opening new banker' },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe({
+        next: (resp) => {
+          console.log(resp);
+          if (isValueDefined(resp)) {
+            const newUserDto = resp;
+            this._userApiService.createUser(newUserDto)
+              .pipe(takeUntil(this.unsubscribe$))
+              .subscribe({
+                next: (resp) => {
+                  console.log(resp);
+
+                }, error: (err) => {
+                  console.error(err);
+                }
+              });
+          }
+
+        }, error: (err) => {
+          console.error(err);
+        }
+      });
   }
 
   openDialogForNewAccount() {

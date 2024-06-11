@@ -23,6 +23,11 @@ import { YesNoDialogComponent } from './dialogs/yes-no-dialog/yes-no-dialog.comp
 import { OpenNewAccountDialogComponent } from './dialogs/open-new-account-dialog/open-new-account-dialog.component';
 import { LoginComponent } from './components/login/login.component';
 import { TokenInterceptor } from './services/user/token.interceptor';
+import { OpenNewBankerDialogComponent } from './dialogs/open-new-banker-dialog/open-new-banker-dialog.component';
+import { BankerDetailComponent } from './components/banker-detail/banker-detail.component';
+import { MatIconModule } from '@angular/material/icon';
+import { ClientLogComponent } from './components/banker-detail/client-log/client-log.component';
+import { AccountLogComponent } from './components/banker-detail/account-log/account-log.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +44,10 @@ import { TokenInterceptor } from './services/user/token.interceptor';
     YesNoDialogComponent,
     OpenNewAccountDialogComponent,
     LoginComponent,
+    OpenNewBankerDialogComponent,
+    BankerDetailComponent,
+    ClientLogComponent,
+    AccountLogComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,7 +57,8 @@ import { TokenInterceptor } from './services/user/token.interceptor';
     ChartsModule,
     UtilComponentModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatIconModule
   ],
   providers: [
     ChartService,

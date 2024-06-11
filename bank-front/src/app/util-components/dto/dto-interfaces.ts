@@ -118,3 +118,41 @@ export interface LoginRequestDto {
     email: string;
     password: string;
 }
+
+export interface UserDto {
+    id?: number;
+    name: string;
+    email: string;
+    password: string;
+    roles: any[];
+    image?: any;
+    imageName?: string;
+    status?: string;
+}
+
+export interface RoleDto {
+    id: number;
+    name: string;
+}
+
+export interface ClientLogDto {
+    id: number;
+    userEmail: string;
+    action: string;
+    logDate: string;
+    clientId: number;
+    clientName: string;
+    clientLastName: string;
+}
+
+export interface AccountLogDto {
+    id: number;
+    userEmail: string;
+    action: string;
+    logDate: string;
+    clientId: number;
+    clientName: string;
+    accountId: number;
+    accountName: string;
+    accountType: string;
+}
