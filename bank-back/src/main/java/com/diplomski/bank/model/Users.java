@@ -36,6 +36,13 @@ public class Users {
     @Column(name = "PASSWORD")
     private String password;
 
+    @Column(name = "IMAGE_NAME")
+    private String imageName;
+
+    @Column(name = "IMAGE")
+    @Lob
+    private byte[] image;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "USER_ROLES",

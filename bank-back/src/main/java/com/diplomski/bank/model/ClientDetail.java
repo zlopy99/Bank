@@ -19,24 +19,33 @@ public class ClientDetail implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
+
     @Column(name = "PARENT_NAME")
     private String parentName;
+
     @Column(name = "STREET_NAME")
     private String streetName;
+
     @Column(name = "STREET_NUMBER")
     private String streetNumber;
+
     @Column(name = "PTT_NUMBER")
     private String pttNumber;
+
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
+
     @Column(name = "MOBILE_NUMBER")
     private String mobileNumber;
+
     @Column(name = "EMAIL")
     private String email;
+
     @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "clientDetail", fetch = FetchType.LAZY)
     private List<Client> clients = new ArrayList<>();
+
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "city_id" )

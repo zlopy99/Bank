@@ -16,8 +16,10 @@ public class AccountDetail implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
+
     @Column(name = "CURRENCY_AMOUNT")
     private Double currencyAmount;
+
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "currency_id" )

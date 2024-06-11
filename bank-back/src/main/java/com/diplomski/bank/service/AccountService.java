@@ -10,9 +10,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +33,7 @@ public class AccountService {
     private final AccountTypeRepository accountTypeRepository;
     private final CurrencyRepository currencyRepository;
     private final RedisDataLoader redis;
+    private final AccountLogRepository accountLogRepository;
 
 
     public List<AccountClientTypeDetailDto> getAccounts(String value) {
@@ -97,6 +102,7 @@ public class AccountService {
             account.setStatus('A');
 
             Account save = accountRepository.save(account);
+            logAccountActions(save, 'I');
             redis.lastFiveClientsAndAccountsDropAndFill();
             responseDto.setClientId(save.getClient().getId());
 
@@ -147,7 +153,8 @@ public class AccountService {
             account.setStatus('C');
             account.setClosingDate(currentLocalDate);
 
-            accountRepository.save(account);
+            Account save = accountRepository.save(account);
+            logAccountActions(save, 'C');
             redis.lastFiveClientsAndAccountsDropAndFill();
 
         } catch (Exception e) {
@@ -170,7 +177,8 @@ public class AccountService {
             account.setEditDate(currentLocalDate);
             account.setClosingDate(null);
 
-            accountRepository.save(account);
+            Account save = accountRepository.save(account);
+            logAccountActions(save, 'R');
             redis.lastFiveClientsAndAccountsDropAndFill();
 
         } catch (Exception e) {
@@ -179,5 +187,34 @@ public class AccountService {
         }
 
         return responseDto;
+    }
+
+    private void logAccountActions(Account account, char action) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User principal = (User) authentication.getPrincipal();
+            String userEmail = principal.getUsername();
+
+            AccountLog accountLog = AccountLog.builder()
+                    .accountType(account.getAccountType().getName())
+                    .accountId(account.getId())
+                    .accountName(account.getName())
+                    .logDate(ClientUtil.getCurrentLocalDateTime())
+                    .closingDate(account.getClosingDate())
+                    .action(action)
+                    .currencyAmount(account.getAccountDetail().getCurrencyAmount())
+                    .editDate(account.getEditDate())
+                    .status(account.getStatus())
+                    .openingDate(account.getOpeningDate())
+                    .userEmail(userEmail)
+                    .clientId(account.getClient().getId())
+                    .currency(account.getAccountDetail().getCurrency().getName())
+                    .build();
+
+            accountLogRepository.save(accountLog);
+
+        } catch (Exception e) {
+            log.error("Exception occurred when logging account data. ", e);
+        }
     }
 }

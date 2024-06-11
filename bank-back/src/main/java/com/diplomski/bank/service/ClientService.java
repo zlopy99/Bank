@@ -10,9 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -27,6 +31,7 @@ public class ClientService {
     private final ModelMapper modelMapper;
     private final RedisDataLoader redis;
     private final AccountRepository accountRepository;
+    private final ClientLogRepository clientLogRepository;
     public static final String CLIENT_DOES_NOT_EXIST = "Client with that ID does not exist";
 
     public List<ClientDto> getClients(String value) {
@@ -87,6 +92,7 @@ public class ClientService {
         try {
             Client client = saveClient(saveClientDto);
 
+            logClientActions(client, 'I');
             redis.lastFiveClientsAndAccountsDropAndFill();
             responseDto.setClientId(client.getId());
 
@@ -176,6 +182,7 @@ public class ClientService {
             client.getClientDetail().setCityClientDetails(city);
 
             clientRepository.save(client);
+            logClientActions(client, 'U');
             redis.lastFiveClientsAndAccountsDropAndFill();
             responseDto.setClientId(clientId);
 
@@ -198,6 +205,7 @@ public class ClientService {
             ifClientIsClosingCloseAllHisAccounts(clientId, currentLocalDate);
 
             Client save = clientRepository.save(clientById.get(0));
+            logClientActions(save, 'C');
             redis.lastFiveClientsAndAccountsDropAndFill();
             responseDto.setClientId(save.getId());
 
@@ -231,6 +239,7 @@ public class ClientService {
             clientById.get(0).setEditDate(currentLocalDate);
 
             Client save = clientRepository.save(clientById.get(0));
+            logClientActions(save, 'R');
             redis.lastFiveClientsAndAccountsDropAndFill();
             responseDto.setClientId(save.getId());
 
@@ -240,5 +249,38 @@ public class ClientService {
         }
 
         return responseDto;
+    }
+
+    private void logClientActions(Client client, char action) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User principal = (User) authentication.getPrincipal();
+            String userEmail = principal.getUsername();
+
+            ClientLog clientLogData = ClientLog.builder()
+                    .logDate(ClientUtil.getCurrentLocalDateTime())
+                    .jmbg(client.getJmbg())
+                    .clientName(client.getName())
+                    .email(client.getClientDetail().getEmail())
+                    .sex(client.getSex())
+                    .action(action)
+                    .clientLastName(client.getLastName())
+                    .clientId(client.getId())
+                    .status(client.getStatus())
+                    .mobileNumber(client.getClientDetail().getMobileNumber())
+                    .personalDocId(client.getPersonalDocId())
+                    .phoneNumber(client.getClientDetail().getPhoneNumber())
+                    .userEmail(userEmail)
+                    .parentName(client.getClientDetail().getParentName())
+                    .streetName(client.getClientDetail().getStreetName())
+                    .streetNumber(client.getClientDetail().getStreetNumber())
+                    .pttNumber(client.getClientDetail().getPttNumber())
+                    .build();
+
+            clientLogRepository.save(clientLogData);
+
+        } catch (Exception e) {
+            log.error("Exception occurred when logging client data. ", e);
+        }
     }
 }

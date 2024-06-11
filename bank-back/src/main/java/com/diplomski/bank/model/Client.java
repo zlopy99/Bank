@@ -32,38 +32,50 @@ public class Client implements Serializable {
     @SequenceGenerator(name = "client_generator", sequenceName = "client_sequence", allocationSize = 1, initialValue = 100)
     @Column(name = "ID")
     private Long id;
+
     @Column(name = "NAME")
     private String name;
+
     @Column(name = "LAST_NAME")
     private String lastName;
+
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @Column(name = "DATE_OF_BIRTH")
     private LocalDate dateOfBirth;
+
     @Column(name = "JMBG")
     private String jmbg;
+
     @Column(name = "SEX")
     private Character sex;
+
     @Column(name = "STATUS")
     private Character status;
+
     @Column(name = "PERSONAL_DOC_ID")
     private String personalDocId;
+
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @Column(name = "OPENING_DATE")
     private LocalDate openingDate;
+
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @Column(name = "EDIT_DATE")
     private LocalDate editDate;
+
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @Column(name = "CLOSING_DATE")
     private LocalDate closingDate;
+
     @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<Account> accounts = new ArrayList<>();
+
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "client_detail_id" )

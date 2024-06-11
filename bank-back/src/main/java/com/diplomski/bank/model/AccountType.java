@@ -15,6 +15,7 @@ public class AccountType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Integer id;
+
     @Column(name = "NAME")
     private String name;
 }

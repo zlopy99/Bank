@@ -6,12 +6,14 @@ import lombok.Getter;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Getter
 public class ClientUtil {
     public final static String formatOfDate = "yyyy-MM-dd";
+    public final static String formatOfDateTime = "yyyy-MM-dd HH:mm:ss";
     public final static DecimalFormat df = new DecimalFormat("#.##");
 
     private ClientUtil() {
@@ -23,6 +25,14 @@ public class ClientUtil {
         String formattedDate = formatter.format(localDate);
 
         return LocalDate.parse(formattedDate);
+    }
+
+    public static LocalDateTime getCurrentLocalDateTime() {
+        LocalDateTime localDate = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatOfDateTime);
+        String formattedDate = formatter.format(localDate);
+
+        return LocalDateTime.parse(formattedDate, formatter);
     }
 
     public static Set<AccountTypeDto> calculatePercentage(List<AccountTypeDto> accountTypeDtoList) {
