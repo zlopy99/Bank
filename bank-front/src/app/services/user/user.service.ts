@@ -48,6 +48,20 @@ export class UserService {
     localStorage.setItem('access_token', accessToken);
   }
 
+  getUserEmail() {
+    let email = null;
+    const jwt = localStorage.getItem('access_token');
+
+    if (isValueDefined(jwt) && jwt !== null) {
+      email = jwtDecode(jwt);
+      const sub: any = (email as any).sub;
+
+      return sub;
+    }
+
+    return null;
+  }
+
   getUserRolesRoles() {
     let payload = null;
     const jwt = localStorage.getItem('access_token');
@@ -67,18 +81,10 @@ export class UserService {
   }
 
   checkForUserRole(url: string, isUserLogedIn: boolean): boolean {
-    switch (true) {
-      case url.startsWith('/clients/detail'):
-        return this.checkRoleForAccount() || this.checkRoleForClient();
-      case url.startsWith('/clients'):
-        return this.checkRoleForClient();
-      case url.startsWith('/accounts'):
-        return this.checkRoleForAccount();
-      case url.startsWith('/bankers'):
-        return this.checkRoleForBanker();
-      default:
-        return isUserLogedIn;
-    }
+    if (url.startsWith('/bankers')) {
+      return this.checkRoleForBanker();
+
+    } else return isUserLogedIn;
   }
 
   checkRoleForClient() {
@@ -116,5 +122,19 @@ export class UserService {
       ? false
       : roles?.some((item) => item.authority === role
         || item.authority === 'ADMIN');
+  }
+
+  getRoleName() {
+    const roles = this.getUserRolesRoles();
+
+    if (this.getUserRolesRoles() === null)
+      return [];
+
+    let myRoleList: string[] = [];
+    roles?.forEach(role => {
+      myRoleList.push(role.authority);
+    });
+
+    return myRoleList;
   }
 }

@@ -17,12 +17,16 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
-                        <a *ngIf="userPathVisibilityClient" class="nav-link dropdown-toggle" id="clientsDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a *ngIf="userPathVisibilityClient" class="nav-link dropdown-toggle" id="clientsDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Clients
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="clientsDropdown">
-                            <li><a class="dropdown-item" (click)="openDialogForNewClient()">Open new client</a></li>
+                            <li *ngIf="!roleName.includes('BANKER_OBSERVE') 
+                            || (roleName.includes('ADMIN')
+                            && roleName.includes('BANKER_ACCOUNT')
+                            && roleName.includes('BANKER_CLIENT'))"><a class="dropdown-item"
+                                    (click)="openDialogForNewClient()">Open new client</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -30,12 +34,16 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a *ngIf="userPathVisibilityAccount" class="nav-link dropdown-toggle" id="accountsDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a *ngIf="userPathVisibilityAccount" class="nav-link dropdown-toggle" id="accountsDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Accounts
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="accountsDropdown">
-                            <li><a class="dropdown-item" (click)="openDialogForNewAccount()">Open new account</a></li>
+                            <li *ngIf="!roleName.includes('BANKER_OBSERVE') 
+                            || (roleName.includes('ADMIN')
+                            && roleName.includes('BANKER_ACCOUNT')
+                            && roleName.includes('BANKER_CLIENT'))"><a class="dropdown-item"
+                                    (click)="openDialogForNewAccount()">Open new account</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -43,8 +51,8 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a *ngIf="userPathVisibilityAdmin" class="nav-link dropdown-toggle" id="bankersDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a *ngIf="userPathVisibilityAdmin" class="nav-link dropdown-toggle" id="bankersDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Bankers
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="bankersDropdown">
@@ -74,7 +82,8 @@
                                 d="M22 22L20 20"></path>
                         </svg>
                     </button>
-                    <input placeholder="Search clients.." (keyup.enter)="searchClient()" class="input" name="text" type="text" [(ngModel)]="inputValue" #inputElement>
+                    <input placeholder="Search clients.." (keyup.enter)="searchClient()" class="input" name="text"
+                        type="text" [(ngModel)]="inputValue" #inputElement>
                 </div>
             </div>
         </div>

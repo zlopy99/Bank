@@ -9,12 +9,25 @@ import { RoleList, roleList } from '../../util-components/enums/roleList';
 import { UserDto } from '../../util-components/dto/dto-interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { YesNoDialogComponent } from '../../dialogs/yes-no-dialog/yes-no-dialog.component';
+import { UserService } from '../../services/user/user.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 
 @Component({
   selector: 'app-banker-detail',
   templateUrl: './banker-detail.component.html',
-  styleUrl: './banker-detail.component.css'
+  styleUrl: './banker-detail.component.css',
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-in', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-out', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class BankerDetailComponent {
   userId!: string;
@@ -25,6 +38,7 @@ export class BankerDetailComponent {
   selectedFile!: File;
   isClicked = false;
   clientOrAccountLogs = true;
+  logedInUserEdit = false;
 
   constructor(
     private _userApiService: UserApiService,
@@ -33,6 +47,7 @@ export class BankerDetailComponent {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     public dialog: MatDialog,
+    private _userService: UserService
   ) {
     this.setupFormGroup();
     this.setQueryParams();
@@ -69,9 +84,20 @@ export class BankerDetailComponent {
 
     if (user !== undefined) {
       this.userOriginalData = user;
+
+      this.checkIfThisIsTheSameUser(user);
       this.setImage(user);
       this.populateUserData(user);
     }
+  }
+
+  checkIfThisIsTheSameUser(user: UserDto) {
+    const email = this._userService.getUserEmail();
+    this.logedInUserEdit = email === user.email;
+
+    if (this.logedInUserEdit)
+      this.formGroup.get('roles')?.disable();
+    else this.formGroup.get('roles')?.enable();
   }
 
   setImage(user: UserDto) {
@@ -110,15 +136,20 @@ export class BankerDetailComponent {
     const dialogValue = await firstValueFrom(dialogRef.afterClosed());
 
     if (dialogValue) {
-      this.formGroup.get('userName')?.setValue(this.userOriginalData.name);
-      this.formGroup.get('email')?.setValue(this.userOriginalData.email);
-      this.formGroup.get('roles')?.setValue(
-        roleList.filter(item => this.userOriginalData.roles.find(item2 => item2.id === item.id))
-      );
-      this.formGroup.get('image')?.setValue(null);
-      this.formGroup.get('passwordChange')?.setValue(null);
-      this.formGroup.get('imageName')?.setValue(this.userOriginalData.imageName);
+      this.resetToOriginal();
     }
+  }
+
+  resetToOriginal() {
+    this.formGroup.get('userName')?.setValue(this.userOriginalData.name);
+    this.formGroup.get('email')?.setValue(this.userOriginalData.email);
+    this.formGroup.get('roles')?.setValue(
+      roleList.filter(item => this.userOriginalData.roles.find(item2 => item2.id === item.id))
+    );
+    this.formGroup.get('image')?.setValue(null);
+    this.formGroup.get('passwordChange')?.setValue(null);
+    this.formGroup.get('imageName')?.setValue(this.userOriginalData.imageName);
+    this.isClicked = false;
   }
 
   async editBanker() {
@@ -150,7 +181,7 @@ export class BankerDetailComponent {
         if (user !== undefined) {
           this.userOriginalData = user;
           this.setImage(user);
-          this.populateUserData(user);
+          this.resetToOriginal();
         }
       }
     }
@@ -191,7 +222,7 @@ export class BankerDetailComponent {
       name: this.formGroup.get('userName')?.getRawValue(),
       email: this.formGroup.get('email')?.getRawValue(),
       roles: this.formGroup.get('roles')?.getRawValue(),
-      password: this.formGroup.get('password')?.getRawValue(),
+      password: this.formGroup.get('passwordChange')?.getRawValue(),
     }
 
     return data;

@@ -584,7 +584,9 @@ export class ClientsDetailComponent implements OnInit {
   }
 
   isOpenAccountDisabeld() {
-    if (!this.clientFormGroup.valid || this.clientStatus === 'CLOSED')
+    if (this.clientFormGroup.status === 'DISABLED' && this.clientStatus !== 'CLOSED')
+      return false;
+    else if (!this.clientFormGroup.valid || this.clientStatus === 'CLOSED')
       return true;
     else if (this.adminRole)
       return false;

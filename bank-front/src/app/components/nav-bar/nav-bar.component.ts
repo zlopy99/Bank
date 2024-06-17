@@ -28,6 +28,7 @@ export class NavBarComponent implements OnDestroy {
   userPathVisibilityAccount!: boolean;
   userPathVisibilityClient!: boolean;
   userPathVisibilityAdmin!: boolean;
+  roleName!: string[];
 
   constructor(
     private router: Router,
@@ -219,5 +220,6 @@ export class NavBarComponent implements OnDestroy {
     this.userPathVisibilityAccount = this._userService.checkRoleForAccount();
     this.userPathVisibilityClient = this._userService.checkRoleForClient();
     this.userPathVisibilityAdmin = this._userService.checkRoleForBanker();
+    this.roleName = this._userService.getRoleName();
   }
 }

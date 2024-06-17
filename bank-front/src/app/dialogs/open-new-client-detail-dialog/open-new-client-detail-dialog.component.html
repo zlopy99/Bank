@@ -93,8 +93,8 @@
         </form>
     </mat-dialog-content>
     <mat-dialog-actions class="d-flex justify-content-center">
-        <button type="button" mat-raised-button color="warn" (click)="closeDialog()">Close</button>
         <button mat-raised-button color="primary" [disabled]="clientFormGroup.invalid"
-            (click)="openClient()">Open new client</button>
+        (click)="openClient()">Open new client</button>
+        <button type="button" mat-raised-button color="warn" (click)="closeDialog()">Close</button>
     </mat-dialog-actions>
 </div>

@@ -5,7 +5,7 @@ import { AngularMaterialModule } from './modules/angular-material.module';
 import { AppRoutingModule } from './modules/app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ChartsModule } from './modules/charts.module';
@@ -28,6 +28,8 @@ import { BankerDetailComponent } from './components/banker-detail/banker-detail.
 import { MatIconModule } from '@angular/material/icon';
 import { ClientLogComponent } from './components/banker-detail/client-log/client-log.component';
 import { AccountLogComponent } from './components/banker-detail/account-log/account-log.component';
+import { provideRouter, withViewTransitions } from '@angular/router';
+import { routes } from './modules/app-routing.module'
 
 @NgModule({
   declarations: [
@@ -66,7 +68,10 @@ import { AccountLogComponent } from './components/banker-detail/account-log/acco
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    }
+    },
+    provideAnimations(),
+    provideRouter(routes, withViewTransitions()
+    )
   ],
   bootstrap: [AppComponent]
 })

@@ -6,12 +6,24 @@ import { AccountApiService } from '../../services/account/account-api.service';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { isValueDefined } from '../../util-components/util-methods/util-methods';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 
 @Component({
   selector: 'app-accounts-overview',
   templateUrl: './accounts-overview.component.html',
-  styleUrl: './accounts-overview.component.css'
+  styleUrl: './accounts-overview.component.css',
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-in', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-out', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class AccountsOverviewComponent {
   inputValue = '';
@@ -31,6 +43,7 @@ export class AccountsOverviewComponent {
     this.sort = ms;
     this.setPaginatorAndSort();
   }
+  loader = false;
 
   constructor(private _accountApiService: AccountApiService, private activatedRoute: ActivatedRoute) {
     this.activatedRoute.queryParamMap.pipe(
@@ -61,6 +74,7 @@ export class AccountsOverviewComponent {
   }
 
   getAccounts() {
+    this.loader = true;
     if (this.inputValue.length >= 3) {
       this._accountApiService.getAccounts(this.inputValue)
         .pipe(takeUntil(this.unsubscribe$))
@@ -70,14 +84,17 @@ export class AccountsOverviewComponent {
             this.ACCOUNT_DATA = resp;
             this.dataSourceAccount = new MatTableDataSource(this.ACCOUNT_DATA);
             this.setPaginatorAndSort();
+            this.loader = false;
           }, error: (err) => {
             console.error(err);
             this.showTable = false;
+            this.loader = false;
           }
         })
     } else {
       console.log('Treba iskočiti poruka koja kaže da je minimalno 3 znaka potrebno');
       this.showTable = false;
+      this.loader = false;
     }
   }
 }

@@ -10,7 +10,7 @@ import { authGuardGuard } from '../services/guard/auth-guard.guard';
 import { isValueDefined } from '../util-components/util-methods/util-methods';
 import { BankerDetailComponent } from '../components/banker-detail/banker-detail.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'home', component: HomeComponent, canActivate: [authGuardGuard] },
   { path: 'clients', component: ClientsOverviewComponent, canActivate: [authGuardGuard] },

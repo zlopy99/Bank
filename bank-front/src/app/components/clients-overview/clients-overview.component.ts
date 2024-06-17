@@ -8,11 +8,23 @@ import { ClientService } from '../../services/client/client.service';
 import { ClientServiceApi } from '../../services/client/client-api.service';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { isValueDefined } from '../../util-components/util-methods/util-methods';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-clients-overview',
   templateUrl: './clients-overview.component.html',
-  styleUrl: './clients-overview.component.css'
+  styleUrl: './clients-overview.component.css',
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-in', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-out', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class ClientsOverviewComponent implements OnDestroy {
   CLIENT_DATA: ClientDto[] = [];
@@ -34,6 +46,7 @@ export class ClientsOverviewComponent implements OnDestroy {
     this.sort = ms;
     this.setPaginatorAndSort();
   }
+  loader = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -72,6 +85,7 @@ export class ClientsOverviewComponent implements OnDestroy {
   }
 
   getClients() {
+    this.loader = true;
     if (this.inputValue.length >= 3) {
       this._clientServiceApi.getClients(this.inputValue)
         .pipe(takeUntil(this.unsubscribe$))
@@ -81,14 +95,17 @@ export class ClientsOverviewComponent implements OnDestroy {
             this.CLIENT_DATA = resp;
             this.dataSourceClient = new MatTableDataSource(this.CLIENT_DATA);
             this.setPaginatorAndSort();
+            this.loader = false;
           }, error: (err) => {
             console.error(err);
             this.showTable = false;
+            this.loader = false;
           }
         })
     } else {
       console.log('Treba iskočiti poruka koja kaže da je minimalno 3 znaka potrebno');
       this.showTable = false;
+      this.loader = false;
     }
   }
 

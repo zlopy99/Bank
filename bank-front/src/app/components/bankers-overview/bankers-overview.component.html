@@ -15,8 +15,15 @@
             </div>
         </div>
     </div>
-    <div *ngIf="USER_DATA.length > 0" class="row mt-5 d-flex justify-content-center">
-        <div class="col-10">
+
+    <div *ngIf="loader" class="loader-spiner">
+        <svg class="svg" viewBox="25 25 50 50">
+            <circle r="20" cy="50" cx="50"></circle>
+          </svg>
+    </div>
+
+    <div *ngIf="USER_DATA.length > 0" class="row mt-5 d-flex justify-content-center" @fadeInOut>
+        <div class="col-lg-10">
             <mat-card>
                 <div class="example-table-container">
                     <table mat-table [dataSource]="dataSource" matSort>

@@ -1,308 +1,324 @@
 <div class="content-container">
     <div class="row d-flex justify-content-center">
-        <div class="col-lg-6">
-            <mat-card class="card-profile">
-                <div *ngIf="clientSex === 'M'" class="card-avatar"
-                    [style.backgroundColor]=" clientStatus === 'CLOSED' ? '#d55454' : '#b1dae7'">
-                    <img class="img" src="./assets/man.png" />
+        <div class="col-lg-10">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-6">
+                    <mat-card class="card-profile">
+                        <div *ngIf="clientSex === 'M'" class="card-avatar"
+                            [style.backgroundColor]=" clientStatus === 'CLOSED' ? '#d55454' : '#b1dae7'">
+                            <img class="img" src="./assets/man.png" />
+                        </div>
+                        <div *ngIf="clientSex === 'F'" class="card-avatar"
+                            [style.backgroundColor]=" clientStatus === 'CLOSED' ? '#d55454' : '#b1dae7'">
+                            <img class="img" src="./assets/woman.png" />
+                        </div>
+                        <mat-card-content class="example-table-container">
+                            <div class="card-body">
+                                <form [formGroup]="clientFormGroup">
+                                    <div class="row">
+                                        <div class="col-lg-12 d-flex justify-content-center">
+                                            <h2 class="client-name-display">{{ clientStatus }}</h2>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 d-flex justify-content-center">
+                                        <mat-card class="mat-card-custom">
+                                            <mat-card-header>
+                                                <h2 class="mat-card-header-custom">Personal info</h2>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Name</mat-label>
+                                                            <input matInput formControlName="name"
+                                                                placeholder="Client name...">
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Last name</mat-label>
+                                                            <input matInput formControlName="lastName"
+                                                                placeholder="Client last name...">
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>JMBG</mat-label>
+                                                            <input matInput formControlName="jmbg"
+                                                                placeholder="Client JMBG...">
+                                                        </mat-form-field>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Date of birth</mat-label>
+                                                            <input (dateInput)="onDateChange($event)" matInput
+                                                                type="text" [matDatepicker]="picker"
+                                                                formControlName="dateOfBirth" placeholder="yyyy-MM-dd"
+                                                                [max]="currentDate">
+                                                            <mat-datepicker-toggle matIconSuffix
+                                                                [for]="picker"></mat-datepicker-toggle>
+                                                            <mat-datepicker #picker></mat-datepicker>
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Personal doc number</mat-label>
+                                                            <input matInput formControlName="personalDocNumber"
+                                                                placeholder="Personal doc...">
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Sex</mat-label>
+                                                            <mat-select formControlName="sex">
+                                                                @for (sex of mySexList; track sex) {
+                                                                <mat-option [value]="sex.name">{{sex.name}}</mat-option>
+                                                                }
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                    </div>
+                                                </div>
+                                            </mat-card-content>
+                                        </mat-card>
+                                    </div>
+                                    <div class="col-lg-12 d-flex justify-content-center">
+                                        <mat-card class="mat-card-custom">
+                                            <mat-card-header>
+                                                <h2 class="mat-card-header-custom">Detailed info</h2>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Parent name</mat-label>
+                                                            <input matInput formControlName="parentName"
+                                                                placeholder="Parent name...">
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Street name</mat-label>
+                                                            <input matInput formControlName="streetName"
+                                                                placeholder="Street name...">
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Street number</mat-label>
+                                                            <input matInput formControlName="streetNumber"
+                                                                placeholder="Street number...">
+                                                        </mat-form-field>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Country</mat-label>
+                                                            <input matInput formControlName="country"
+                                                                placeholder="Country..."
+                                                                [matAutocomplete]="autoCountry">
+                                                            <mat-autocomplete #autoCountry="matAutocomplete"
+                                                                [displayWith]="displayCounteries">
+                                                                @for (option of filteredCountryOptions | async; track
+                                                                option) {
+                                                                <mat-option [value]="option">{{ option.name
+                                                                    }}</mat-option>
+                                                                }
+                                                            </mat-autocomplete>
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>City</mat-label>
+                                                            <input matInput formControlName="city" placeholder="City..."
+                                                                [matAutocomplete]="autoCity">
+                                                            <mat-autocomplete #autoCity="matAutocomplete"
+                                                                [displayWith]="displayCities">
+                                                                @for (option of filteredCityOptions | async; track
+                                                                option) {
+                                                                <mat-option [value]="option">{{ option.name
+                                                                    }}</mat-option>
+                                                                }
+                                                            </mat-autocomplete>
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Ptt number</mat-label>
+                                                            <input matInput formControlName="pttNumber"
+                                                                placeholder="Ptt...">
+                                                        </mat-form-field>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Phone number</mat-label>
+                                                            <input matInput formControlName="phoneNumber"
+                                                                placeholder="Phone number..."
+                                                                (change)="onContactChange()">
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Mobile number</mat-label>
+                                                            <input matInput formControlName="mobileNumber"
+                                                                placeholder="Mobile number..."
+                                                                (change)="onContactChange()">
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <mat-form-field class="form-field-width">
+                                                            <mat-label>Email</mat-label>
+                                                            <input matInput formControlName="email"
+                                                                placeholder="Email..." (change)="onContactChange()">
+                                                        </mat-form-field>
+                                                    </div>
+                                                </div>
+                                            </mat-card-content>
+                                        </mat-card>
+                                    </div>
+                                    <div class="col-lg-12 d-flex justify-content-between">
+                                        <div>
+                                            <button style="margin-right: 0.5rem;" mat-raised-button color="primary"
+                                                (click)="openNewAccount()" [disabled]="isOpenAccountDisabeld()"
+                                                type="button">Open account</button>
+                                            <button mat-raised-button color="primary" (click)="editClient()"
+                                                [disabled]="!clientFormGroup.valid || clientStatus === 'CLOSED' || !clientRole"
+                                                type="button">Change
+                                                client</button>
+                                        </div>
+                                        <button *ngIf="clientStatus !== 'CLOSED'" [disabled]="!clientRole" type="button"
+                                            mat-raised-button color="warn" (click)="closeClientDialog()">Close
+                                            client</button>
+                                        <button *ngIf="clientStatus === 'CLOSED'" [disabled]="!clientRole" type="button"
+                                            mat-raised-button color="primary" (click)="reopenClientDialog()">Reopen
+                                            client</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
                 </div>
-                <div *ngIf="clientSex === 'F'" class="card-avatar"
-                    [style.backgroundColor]=" clientStatus === 'CLOSED' ? '#d55454' : '#b1dae7'">
-                    <img class="img" src="./assets/woman.png" />
-                </div>
-                <mat-card-content class="example-table-container">
-                    <div class="card-body">
-                        <form [formGroup]="clientFormGroup">
-                            <div class="row">
-                                <div class="col-lg-12 d-flex justify-content-center">
-                                    <h2 class="client-name-display">{{ clientStatus }}</h2>
+                <div class="col-lg-6">
+                    <mat-card class="card-profile">
+                        <div class="example-table-container">
+                            <table mat-table [dataSource]="dataSourceAccount" matSort>
+
+                                <ng-container matColumnDef="id">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="status">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.status}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="accountTypeName">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Account type </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.accountTypeName}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="accountDetailCurrencyName">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Currency name </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.accountDetailCurrencyName}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="accountDetailCurrencyAmount">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.accountDetailCurrencyAmount}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="actions">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions </th>
+                                    <td mat-cell *matCellDef="let row" (click)="onRowClick($event)">
+                                        <span *ngIf="row.status === 'A'">
+                                            <button [disabled]="!accountRole" (click)="closeAccount(row.id)"
+                                                color="warn" mat-icon-button matTooltip="close">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </span>
+                                        <span *ngIf="row.status === 'C'">
+                                            <button (click)="reOpenAccount(row.id)" color="primary" mat-icon-button
+                                                matTooltip="open"
+                                                [disabled]="clientStatus === 'CLOSED' || !accountRole">
+                                                <mat-icon>arrow_right</mat-icon>
+                                            </button>
+                                        </span>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row-pick"
+                                    (click)="goToAccounts(row)"></tr>
+
+                                <!-- Row shown when there is no matching data. -->
+                                <tr class="mat-row" *matNoDataRow>
+                                    <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="mat-paginator">
+                            <div class="row" style="margin: 0;">
+                                <div class="col-lg-6 d-flex justify-content-center align-items-end">
+                                    <button mat-icon-button [color]="'white'" [matMenuTriggerFor]="menu"
+                                        aria-label="Example icon button with a menu icon">
+                                        <mat-icon>menu</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu" (closed)="onMenuClosed()">
+                                        <mat-list role="list">
+                                            <mat-list-item role="listitem">
+                                                <mat-checkbox style="margin-right: 2rem;" [color]="'primary'"
+                                                    (click)="$event.stopPropagation()" (change)="onCheck($event, 1)"
+                                                    class="example-margin">
+                                                    Savings
+                                                </mat-checkbox>
+                                                <mat-checkbox [color]="'primary'" (click)="$event.stopPropagation()"
+                                                    (change)="onCheck($event, 2)" class="example-margin">
+                                                    Student
+                                                </mat-checkbox>
+                                            </mat-list-item>
+                                            <mat-list-item role="listitem">
+                                                <mat-checkbox style="margin-right: 2rem;" [color]="'primary'"
+                                                    (click)="$event.stopPropagation()" class="example-margin"
+                                                    (change)="onCheck($event, 3)">
+                                                    Joint
+                                                </mat-checkbox>
+                                                <mat-checkbox [color]="'primary'" (click)="$event.stopPropagation()"
+                                                    class="example-margin" (change)="onCheck($event, 4)">
+                                                    Checking
+                                                </mat-checkbox>
+                                            </mat-list-item>
+                                            <mat-list-item role="listitem">
+                                                <mat-checkbox style="margin-right: 2rem;" [color]="'primary'"
+                                                    (click)="$event.stopPropagation()" class="example-margin"
+                                                    (change)="onCheck($event, 5)">
+                                                    Retirement
+                                                </mat-checkbox>
+                                            </mat-list-item>
+                                        </mat-list>
+                                    </mat-menu>
+                                    <mat-form-field style="width: 70%;">
+                                        <mat-label>Filter</mat-label>
+                                        <input matInput (keyup)="applyFilter($event)" placeholder="Filter by..." #input>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-6 d-flex justify-content-center align-items-end">
+                                    <mat-paginator [pageSize]="20" aria-label="Select page of users"></mat-paginator>
                                 </div>
                             </div>
-                            <div class="col-lg-12 d-flex justify-content-center">
-                                <mat-card class="mat-card-custom">
-                                    <mat-card-header>
-                                        <h2 class="mat-card-header-custom">Personal info</h2>
-                                    </mat-card-header>
-                                    <mat-card-content>
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Name</mat-label>
-                                                    <input matInput formControlName="name" placeholder="Client name...">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Last name</mat-label>
-                                                    <input matInput formControlName="lastName"
-                                                        placeholder="Client last name...">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>JMBG</mat-label>
-                                                    <input matInput formControlName="jmbg" placeholder="Client JMBG...">
-                                                </mat-form-field>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Date of birth</mat-label>
-                                                    <input (dateInput)="onDateChange($event)" matInput type="text"
-                                                        [matDatepicker]="picker" formControlName="dateOfBirth"
-                                                        placeholder="yyyy-MM-dd" [max]="currentDate">
-                                                    <mat-datepicker-toggle matIconSuffix
-                                                        [for]="picker"></mat-datepicker-toggle>
-                                                    <mat-datepicker #picker></mat-datepicker>
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Personal doc number</mat-label>
-                                                    <input matInput formControlName="personalDocNumber"
-                                                        placeholder="Personal doc...">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Sex</mat-label>
-                                                    <mat-select formControlName="sex">
-                                                        @for (sex of mySexList; track sex) {
-                                                        <mat-option [value]="sex.name">{{sex.name}}</mat-option>
-                                                        }
-                                                    </mat-select>
-                                                </mat-form-field>
-                                            </div>
-                                        </div>
-                                    </mat-card-content>
-                                </mat-card>
-                            </div>
-                            <div class="col-lg-12 d-flex justify-content-center">
-                                <mat-card class="mat-card-custom">
-                                    <mat-card-header>
-                                        <h2 class="mat-card-header-custom">Detailed info</h2>
-                                    </mat-card-header>
-                                    <mat-card-content>
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Parent name</mat-label>
-                                                    <input matInput formControlName="parentName"
-                                                        placeholder="Parent name...">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Street name</mat-label>
-                                                    <input matInput formControlName="streetName"
-                                                        placeholder="Street name...">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Street number</mat-label>
-                                                    <input matInput formControlName="streetNumber"
-                                                        placeholder="Street number...">
-                                                </mat-form-field>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Country</mat-label>
-                                                    <input matInput formControlName="country" placeholder="Country..."
-                                                        [matAutocomplete]="autoCountry">
-                                                    <mat-autocomplete #autoCountry="matAutocomplete"
-                                                        [displayWith]="displayCounteries">
-                                                        @for (option of filteredCountryOptions | async; track option) {
-                                                        <mat-option [value]="option">{{ option.name }}</mat-option>
-                                                        }
-                                                    </mat-autocomplete>
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>City</mat-label>
-                                                    <input matInput formControlName="city" placeholder="City..."
-                                                        [matAutocomplete]="autoCity">
-                                                    <mat-autocomplete #autoCity="matAutocomplete"
-                                                        [displayWith]="displayCities">
-                                                        @for (option of filteredCityOptions | async; track option) {
-                                                        <mat-option [value]="option">{{ option.name }}</mat-option>
-                                                        }
-                                                    </mat-autocomplete>
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Ptt number</mat-label>
-                                                    <input matInput formControlName="pttNumber" placeholder="Ptt...">
-                                                </mat-form-field>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Phone number</mat-label>
-                                                    <input matInput formControlName="phoneNumber"
-                                                        placeholder="Phone number..." (change)="onContactChange()">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Mobile number</mat-label>
-                                                    <input matInput formControlName="mobileNumber"
-                                                        placeholder="Mobile number..." (change)="onContactChange()">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <mat-form-field class="form-field-width">
-                                                    <mat-label>Email</mat-label>
-                                                    <input matInput formControlName="email" placeholder="Email..."
-                                                        (change)="onContactChange()">
-                                                </mat-form-field>
-                                            </div>
-                                        </div>
-                                    </mat-card-content>
-                                </mat-card>
-                            </div>
-                            <div class="col-lg-12 d-flex justify-content-between">
-                                <button *ngIf="clientStatus !== 'CLOSED'" [disabled]="!clientRole" type="button" mat-raised-button color="warn"
-                                    (click)="closeClientDialog()">Close
-                                    client</button>
-                                <button *ngIf="clientStatus === 'CLOSED'" [disabled]="!clientRole" type="button" mat-raised-button
-                                    color="primary" (click)="reopenClientDialog()">Reopen
-                                    client</button>
-                                <div>
-                                    <button style="margin-right: 0.5rem;" mat-raised-button color="primary" (click)="openNewAccount()"
-                                        [disabled]="isOpenAccountDisabeld()"
-                                        type="button">Open account</button>
-                                    <button mat-raised-button color="primary" (click)="editClient()"
-                                        [disabled]="!clientFormGroup.valid || clientStatus === 'CLOSED' || !clientRole"
-                                        type="button">Change
-                                        client</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </div>
-        <div class="col-lg-6">
-            <mat-card class="card-profile">
-                <div class="example-table-container">
-                    <table mat-table [dataSource]="dataSourceAccount" matSort>
-
-                        <ng-container matColumnDef="id">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
-                            <td mat-cell *matCellDef="let row"> {{row.id}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="status">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-                            <td mat-cell *matCellDef="let row"> {{row.status}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="accountTypeName">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Account type </th>
-                            <td mat-cell *matCellDef="let row"> {{row.accountTypeName}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="accountDetailCurrencyName">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Currency name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.accountDetailCurrencyName}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="accountDetailCurrencyAmount">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
-                            <td mat-cell *matCellDef="let row"> {{row.accountDetailCurrencyAmount}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="actions">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions </th>
-                            <td mat-cell *matCellDef="let row" (click)="onRowClick($event)">
-                                <span *ngIf="row.status === 'A'">
-                                    <button [disabled]="!accountRole" (click)="closeAccount(row.id)" color="warn" mat-icon-button
-                                        matTooltip="close">
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-                                </span>
-                                <span *ngIf="row.status === 'C'">
-                                    <button (click)="reOpenAccount(row.id)" color="primary" mat-icon-button
-                                        matTooltip="open" [disabled]="clientStatus === 'CLOSED' || !accountRole">
-                                        <mat-icon>arrow_right</mat-icon>
-                                    </button>
-                                </span>
-                            </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row-pick"
-                        (click)="goToAccounts(row)"></tr>
-
-                        <!-- Row shown when there is no matching data. -->
-                        <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="mat-paginator">
-                    <div class="row" style="margin: 0;">
-                        <div class="col-lg-6 d-flex justify-content-center align-items-end">
-                            <button mat-icon-button [color]="'white'" [matMenuTriggerFor]="menu"
-                                aria-label="Example icon button with a menu icon">
-                                <mat-icon>menu</mat-icon>
-                            </button>
-                            <mat-menu #menu="matMenu" (closed)="onMenuClosed()">
-                                <mat-list role="list">
-                                    <mat-list-item role="listitem">
-                                        <mat-checkbox style="margin-right: 2rem;" [color]="'primary'"
-                                            (click)="$event.stopPropagation()" (change)="onCheck($event, 1)"
-                                            class="example-margin">
-                                            Savings
-                                        </mat-checkbox>
-                                        <mat-checkbox [color]="'primary'" (click)="$event.stopPropagation()"
-                                            (change)="onCheck($event, 2)" class="example-margin">
-                                            Student
-                                        </mat-checkbox>
-                                    </mat-list-item>
-                                    <mat-list-item role="listitem">
-                                        <mat-checkbox style="margin-right: 2rem;" [color]="'primary'"
-                                            (click)="$event.stopPropagation()" class="example-margin"
-                                            (change)="onCheck($event, 3)">
-                                            Joint
-                                        </mat-checkbox>
-                                        <mat-checkbox [color]="'primary'" (click)="$event.stopPropagation()"
-                                            class="example-margin" (change)="onCheck($event, 4)">
-                                            Checking
-                                        </mat-checkbox>
-                                    </mat-list-item>
-                                    <mat-list-item role="listitem">
-                                        <mat-checkbox style="margin-right: 2rem;" [color]="'primary'"
-                                            (click)="$event.stopPropagation()" class="example-margin"
-                                            (change)="onCheck($event, 5)">
-                                            Retirement
-                                        </mat-checkbox>
-                                    </mat-list-item>
-                                </mat-list>
-                            </mat-menu>
-                            <mat-form-field style="width: 70%;">
-                                <mat-label>Filter</mat-label>
-                                <input matInput (keyup)="applyFilter($event)" placeholder="Filter by..." #input>
-                            </mat-form-field>
                         </div>
-                        <div class="col-lg-6 d-flex justify-content-center align-items-end">
-                            <mat-paginator [pageSize]="20" aria-label="Select page of users"></mat-paginator>
-                        </div>
-                    </div>
+                    </mat-card>
                 </div>
-            </mat-card>
+            </div>
         </div>
     </div>
 </div>

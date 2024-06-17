@@ -9,11 +9,23 @@ import { Subject, takeUntil } from 'rxjs';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { isValueDefined } from '../../util-components/util-methods/util-methods';
 import { Router } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-bankers-overview',
   templateUrl: './bankers-overview.component.html',
-  styleUrl: './bankers-overview.component.css'
+  styleUrl: './bankers-overview.component.css',
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-in', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-out', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class BankersOverviewComponent implements OnDestroy {
   userColumns: string[] = ['id', 'name', 'email', 'image'];
@@ -32,6 +44,7 @@ export class BankersOverviewComponent implements OnDestroy {
   private unsubscribe$ = new Subject<void>();
   imageUrl!: SafeUrl;
   inputValue!: string;
+  loader = false;
 
   constructor(
     private _userApiService: UserApiService,
@@ -60,15 +73,18 @@ export class BankersOverviewComponent implements OnDestroy {
   }
 
   getAllUsers() {
+    this.loader = true;
     this._userApiService.getAllUsers(this.inputValue ?? null)
     .pipe(takeUntil(this.unsubscribe$))
     .subscribe({
       next: async (resp) => {
         this.USER_DATA = await this.setUpImagesForUsers(resp);
         this.dataSource = new MatTableDataSource(this.USER_DATA);
+        this.loader = false;
 
       }, error: (err) => {
         console.error(err);
+        this.loader = false;
       }
     });
   }

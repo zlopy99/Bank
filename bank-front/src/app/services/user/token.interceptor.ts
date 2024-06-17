@@ -32,7 +32,6 @@ export class TokenInterceptor implements HttpInterceptor {
                 return this.refreshToken(request, next);
             }
 
-            this.router.navigate(['/login']);
             return throwError(() => error);
         }))
     }
