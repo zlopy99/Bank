@@ -44,22 +44,22 @@ public class SecurityConfig {
                     ).permitAll();
                     registry.requestMatchers(
                             HttpMethod.GET,
-                            "/api/client/details/**",
-                            "/api/client/countries/**"
+                            "/api/client/*",
+                            "/api/client/details/*",
+                            "/api/client/countries/*",
+                            "/api/account/*"
                     ).hasAnyAuthority(
-                            RolesEnum.ADMIN.getName(),
                             RolesEnum.BANKER_OBSERVE.getName(),
                             RolesEnum.BANKER_CLIENT.getName(),
-                            RolesEnum.BANKER_ACCOUNT.getName()
+                            RolesEnum.BANKER_ACCOUNT.getName(),
+                            RolesEnum.ADMIN.getName()
                     );
                     registry.requestMatchers("/api/client/**").hasAnyAuthority(
                             RolesEnum.ADMIN.getName(),
-                            RolesEnum.BANKER_OBSERVE.getName(),
                             RolesEnum.BANKER_CLIENT.getName()
                     );
                     registry.requestMatchers("/api/account/**").hasAnyAuthority(
                             RolesEnum.ADMIN.getName(),
-                            RolesEnum.BANKER_OBSERVE.getName(),
                             RolesEnum.BANKER_ACCOUNT.getName()
                     );
                     registry.requestMatchers("/api/user/**").hasAuthority(RolesEnum.ADMIN.getName());
