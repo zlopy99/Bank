@@ -1,5 +1,6 @@
 package com.diplomski.bank.service;
 
+import com.diplomski.bank.exception.ApiRequestException;
 import com.diplomski.bank.model.*;
 import com.diplomski.bank.model.dto.AccountClientTypeDetailDto;
 import com.diplomski.bank.model.dto.OpenAccountDto;
@@ -37,11 +38,18 @@ public class AccountService {
 
 
     public List<AccountClientTypeDetailDto> getAccounts(String value) {
-        return switch (value.length()) {
-            case 4 -> getAccountsById(value);
-            case 3 -> getAccountsByClientId(value);
-            default -> getAccountsByName(value);
-        };
+        try {
+            return switch (value.length()) {
+                case 4 -> getAccountsById(value);
+                case 3 -> getAccountsByClientId(value);
+                default -> getAccountsByName(value);
+            };
+
+        } catch (Exception e) {
+            String errMsg = "Exception occurred during account search. ";
+            log.error(errMsg, e);
+            throw new ApiRequestException(errMsg + e.getMessage());
+        }
     }
 
     private List<AccountClientTypeDetailDto> getAccountsById(String value) {
@@ -107,8 +115,9 @@ public class AccountService {
             responseDto.setClientId(save.getClient().getId());
 
         } catch (Exception e) {
-            log.error("Exception when opening new account, " + e.getMessage());
-            responseDto.setErrorMessage(e.getMessage());
+            String errMsg = "Exception when opening new account, ";
+            log.error(errMsg + e.getMessage());
+            responseDto.setErrorMessage(errMsg + e.getMessage());
         }
 
         return responseDto;
@@ -158,8 +167,9 @@ public class AccountService {
             redis.lastFiveClientsAndAccountsDropAndFill();
 
         } catch (Exception e) {
-            log.error("Exception when closing account, " + e.getMessage());
-            responseDto.setErrorMessage(e.getMessage());
+            String errMsg = "Exception when closing account, ";
+            log.error(errMsg + e.getMessage());
+            responseDto.setErrorMessage(errMsg + e.getMessage());
         }
 
         return responseDto;
@@ -182,8 +192,9 @@ public class AccountService {
             redis.lastFiveClientsAndAccountsDropAndFill();
 
         } catch (Exception e) {
-            log.error("Exception when reopening account, " + e.getMessage());
-            responseDto.setErrorMessage(e.getMessage());
+            String errMsg = "Exception when reopening account, ";
+            log.error(errMsg + e.getMessage());
+            responseDto.setErrorMessage(errMsg + e.getMessage());
         }
 
         return responseDto;

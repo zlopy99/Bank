@@ -1,5 +1,6 @@
 package com.diplomski.bank.service;
 
+import com.diplomski.bank.exception.ApiRequestException;
 import com.diplomski.bank.model.*;
 import com.diplomski.bank.model.dto.*;
 import com.diplomski.bank.repository.*;
@@ -35,11 +36,18 @@ public class ClientService {
     public static final String CLIENT_DOES_NOT_EXIST = "Client with that ID does not exist";
 
     public List<ClientDto> getClients(String value) {
-        return switch (value.length()) {
-            case 9 -> getClientByPersonalDocId(value);
-            case 12, 13 -> getClientByJmbg(value);
-            default -> getByIdOrClientName(value);
-        };
+        try {
+            return switch (value.length()) {
+                case 9 -> getClientByPersonalDocId(value);
+                case 12, 13 -> getClientByJmbg(value);
+                default -> getByIdOrClientName(value);
+            };
+
+        } catch (Exception e) {
+            String errMsg = "Exception occurred during client search. ";
+            log.error(errMsg, e);
+            throw new ApiRequestException(errMsg + e.getMessage());
+        }
     }
 
     private List<ClientDto> getClientByPersonalDocId(String value) {
@@ -97,8 +105,9 @@ public class ClientService {
             responseDto.setClientId(client.getId());
 
         } catch (Exception e) {
-            log.error("Exception when opening new client, " + e.getMessage());
-            responseDto.setErrorMessage(e.getMessage());
+            String errMsg = "Exception when opening new client, ";
+            log.error(errMsg + e.getMessage());
+            responseDto.setErrorMessage(errMsg + e.getMessage());
         }
         return responseDto;
     }
@@ -155,7 +164,9 @@ public class ClientService {
             responseDto.setClientId(value);
 
         } catch (Exception e) {
-            log.error("Exception when retriving client details, " + e.getMessage());
+            String errMsg = "Exception when retriving client details, ";
+            log.error(errMsg + e.getMessage());
+            responseDto.setErrorMessage(errMsg + e.getMessage());
         }
 
         return responseDto;
@@ -187,8 +198,9 @@ public class ClientService {
             responseDto.setClientId(clientId);
 
         } catch (Exception e) {
-            log.error("Exception when editing client, " + e.getMessage());
-            responseDto.setErrorMessage(e.getMessage());
+            String errMsg = "Exception when editing client, ";
+            log.error(errMsg + e.getMessage());
+            responseDto.setErrorMessage(errMsg + e.getMessage());
         }
 
         return responseDto;
@@ -210,8 +222,9 @@ public class ClientService {
             responseDto.setClientId(save.getId());
 
         } catch (Exception e) {
-            log.error("Exception when closing client, " + e.getMessage());
-            responseDto.setErrorMessage(e.getMessage());
+            String errMsg = "Exception when closing client, ";
+            log.error(errMsg + e.getMessage());
+            responseDto.setErrorMessage(errMsg + e.getMessage());
         }
 
         return responseDto;
@@ -244,8 +257,9 @@ public class ClientService {
             responseDto.setClientId(save.getId());
 
         } catch (Exception e) {
-            log.error("Exception when reopening client, " + e.getMessage());
-            responseDto.setErrorMessage(e.getMessage());
+            String errMsg = "Exception when reopening client, ";
+            log.error(errMsg + e.getMessage());
+            responseDto.setErrorMessage(errMsg + e.getMessage());
         }
 
         return responseDto;
