@@ -9,6 +9,9 @@
                             Client name
                         </mat-label>
                         <input matInput type="text" formControlName="name">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('name')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('name'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -17,6 +20,9 @@
                             Client last name
                         </mat-label>
                         <input matInput type="text" formControlName="lastName">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('lastName')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('lastName'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -25,6 +31,9 @@
                             Client JMBG
                         </mat-label>
                         <input matInput type="text" maxlength="13" formControlName="jmbg">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('jmbg')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('jmbg'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -36,6 +45,9 @@
                             formControlName="dateOfBirth" [max]="currentDate" placeholder="yyyy-MM-dd">
                         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('dateOfBirth')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('dateOfBirth'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -44,6 +56,9 @@
                             Personal doc number
                         </mat-label>
                         <input matInput type="text" maxlength="9" formControlName="personalDocNumber">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('personalDocNumber')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('personalDocNumber'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -56,6 +71,9 @@
                             <mat-option [value]="sex.name">{{sex.name}}</mat-option>
                             }
                         </mat-select>
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('sex')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('sex'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SexList, sexList } from '../../util-components/enums/sexList';
 import { DatePipe } from '@angular/common';
+import { isValueDefined } from '../../util-components/util-methods/util-methods';
 
 
 @Component({
@@ -34,11 +35,33 @@ export class OpenNewClientDialogComponent implements OnDestroy, OnInit {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  errorControll(formControll: any) {
+    let errMsg = '';
+    if (isValueDefined(formControll)) {
+      const errors = formControll?.errors;
+
+      if (this.checkErrors(errors['required']))
+        errMsg += 'Input is required\n';
+      if (this.checkErrors(errors['minlength'])) {
+        const value = errors['minlength']?.requiredLength;
+        errMsg += `Minimum length is ${value} characters\n`;
+      }
+      if (this.checkErrors(errors['pattern']))
+        errMsg += `Only numbers allowed\n`;
+    }
+
+    return errMsg;
+  }
+
+  checkErrors(formControllErrors: any) {
+    return formControllErrors !== undefined && formControllErrors !== null;
   }
 
   onDateChange(event: any) {

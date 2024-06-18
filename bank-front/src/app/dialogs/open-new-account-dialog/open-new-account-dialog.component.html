@@ -9,6 +9,9 @@
                             Account name
                         </mat-label>
                         <input matInput type="text" formControlName="name">
+                        <mat-error *ngIf="checkErrors(this.accountFormGroup.get('name')?.errors)">
+                            {{errorControll(this.accountFormGroup.get('name'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-6">
@@ -21,6 +24,9 @@
                             <mat-option [value]="type.id">{{type.name}}</mat-option>
                             }
                         </mat-select>
+                        <mat-error *ngIf="checkErrors(this.accountFormGroup.get('accountTypeId')?.errors)">
+                            {{errorControll(this.accountFormGroup.get('accountTypeId'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -31,6 +37,9 @@
                             Money ammount
                         </mat-label>
                         <input matInput type="number" min="5" formControlName="accountDetailCurrencyAmmount">
+                        <mat-error *ngIf="checkErrors(this.accountFormGroup.get('accountDetailCurrencyAmmount')?.errors)">
+                            {{errorControll(this.accountFormGroup.get('accountDetailCurrencyAmmount'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-6">
@@ -43,6 +52,9 @@
                             <mat-option [value]="currency.id">{{currency.name}}</mat-option>
                             }
                         </mat-select>
+                        <mat-error *ngIf="checkErrors(this.accountFormGroup.get('accountDetailCurrencyId')?.errors)">
+                            {{errorControll(this.accountFormGroup.get('accountDetailCurrencyId'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -53,6 +65,9 @@
                             Client Id
                         </mat-label>
                         <input matInput type="number" min="3" formControlName="clientId">
+                        <mat-error *ngIf="checkErrors(this.accountFormGroup.get('clientId')?.errors)">
+                            {{errorControll(this.accountFormGroup.get('clientId'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>

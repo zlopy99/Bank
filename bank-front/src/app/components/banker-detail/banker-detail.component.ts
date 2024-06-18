@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { YesNoDialogComponent } from '../../dialogs/yes-no-dialog/yes-no-dialog.component';
 import { UserService } from '../../services/user/user.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -47,7 +48,8 @@ export class BankerDetailComponent {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private _userService: UserService
+    private _userService: UserService,
+    private toastr: ToastrService
   ) {
     this.setupFormGroup();
     this.setQueryParams();
@@ -80,7 +82,9 @@ export class BankerDetailComponent {
 
   async getUserDetails(userId: string) {
     const user = await firstValueFrom(this._userApiService.getUser(Number(userId)))
-      .catch(error => console.error(error));
+      .catch(error => {
+        this.toastr.error(error?.error?.message, 'Error');
+      });
 
     if (user !== undefined) {
       this.userOriginalData = user;
@@ -176,9 +180,12 @@ export class BankerDetailComponent {
         formData.append('file', this.selectedFile);
 
         const user = await firstValueFrom(this._userApiService.editUser(formData))
-          .catch(err => console.error(err));
+          .catch(err => {
+            this.toastr.error(err?.error?.message, 'Error')
+          });
 
         if (user !== undefined) {
+          this.toastr.success('Banker was modified successfully.', 'Success')
           this.userOriginalData = user;
           this.setImage(user);
           this.resetToOriginal();
@@ -192,11 +199,6 @@ export class BankerDetailComponent {
   }
 
   checkIfThereIsAnythingToEdit() {
-    // console.log(this.formGroup.get('userName')?.getRawValue() === this.userOriginalData.name);
-    // console.log(this.formGroup.get('email')?.getRawValue() === this.userOriginalData.email);
-    // console.log(this.checkForRoles());
-    // console.log(this.formGroup.get('passwordChange')?.getRawValue() === this.userOriginalData.password);
-    // console.log(this.formGroup.get('imageName')?.getRawValue() === this.userOriginalData.imageName);
     return !(
       this.formGroup.get('userName')?.getRawValue() === this.userOriginalData.name &&
       this.formGroup.get('email')?.getRawValue() === this.userOriginalData.email &&
@@ -226,5 +228,35 @@ export class BankerDetailComponent {
     }
 
     return data;
+  }
+
+  errorControll(formControll: any) {
+    let errMsg = '';
+    if (isValueDefined(formControll)) {
+      const errors = formControll?.errors;
+
+      if (this.checkErrors(errors['required']))
+        errMsg += 'Input is required\n';
+      if (this.checkErrors(errors['minlength'])) {
+        const value = errors['minlength']?.requiredLength;
+        errMsg += `Minimum length is ${value} characters\n`;
+      }
+      if (this.checkErrors(errors['pattern']))
+        errMsg += `Only numbers allowed\n`;
+      if (this.checkErrors(errors['needsToBePickedFromTheList']))
+        errMsg += `Needs to be picked from list\n`;
+      if (this.checkErrors(errors['email']))
+        errMsg += `Email input needed\n`;
+      if (this.checkErrors(errors['min'])) {
+        const value = errors['min']?.min;
+        errMsg += `Minimum is ${value}\n`;
+      }
+    }
+
+    return errMsg;
+  }
+
+  checkErrors(formControllErrors: any) {
+    return formControllErrors !== undefined && formControllErrors !== null;
   }
 }

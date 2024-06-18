@@ -24,6 +24,9 @@
                                                     <mat-label>User name</mat-label>
                                                     <input matInput placeholder="Client name..."
                                                         formControlName="userName">
+                                                        <mat-error *ngIf="checkErrors(this.formGroup.get('userName')?.errors)">
+                                                            {{errorControll(this.formGroup.get('userName'))}}
+                                                        </mat-error>
                                                 </mat-form-field>
                                             </div>
                                             <div class="col-lg-6">
@@ -31,6 +34,9 @@
                                                     <mat-label>Email</mat-label>
                                                     <input matInput placeholder="Client last name..."
                                                         formControlName="email">
+                                                        <mat-error *ngIf="checkErrors(this.formGroup.get('email')?.errors)">
+                                                            {{errorControll(this.formGroup.get('email'))}}
+                                                        </mat-error>
                                                 </mat-form-field>
                                             </div>
                                         </div>
@@ -40,6 +46,9 @@
                                                     <mat-label>Password change</mat-label>
                                                     <input matInput placeholder="Client name..."
                                                         formControlName="passwordChange">
+                                                        <mat-error *ngIf="checkErrors(this.formGroup.get('passwordChange')?.errors)">
+                                                            {{errorControll(this.formGroup.get('passwordChange'))}}
+                                                        </mat-error>
                                                 </mat-form-field>
                                             </div>
                                             <div class="col-lg-3">
@@ -65,6 +74,9 @@
                                                         <mat-option [value]="role">{{role.name}}</mat-option>
                                                         }
                                                     </mat-select>
+                                                    <mat-error *ngIf="checkErrors(this.formGroup.get('roles')?.errors)">
+                                                        {{errorControll(this.formGroup.get('roles'))}}
+                                                    </mat-error>
                                                 </mat-form-field>
                                             </div>
                                         </div>

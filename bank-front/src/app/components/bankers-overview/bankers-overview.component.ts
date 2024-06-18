@@ -10,6 +10,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { isValueDefined } from '../../util-components/util-methods/util-methods';
 import { Router } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-bankers-overview',
@@ -50,7 +51,8 @@ export class BankersOverviewComponent implements OnDestroy {
     private _userApiService: UserApiService,
     private _userService: UserService,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) {}
 
   ngOnDestroy() {
@@ -83,7 +85,7 @@ export class BankersOverviewComponent implements OnDestroy {
         this.loader = false;
 
       }, error: (err) => {
-        console.error(err);
+        this.toastr.error(err?.error?.message, 'Error');
         this.loader = false;
       }
     });
@@ -102,7 +104,6 @@ export class BankersOverviewComponent implements OnDestroy {
   }
 
   goToBankerDetails(userId: any) {
-    console.log(userId);
     this.router.navigate(['/bankers/detail'], { queryParams: { userId: userId } });
   }
 }

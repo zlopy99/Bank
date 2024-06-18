@@ -3,8 +3,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject, catchError, debounceTime, filter, map, of, startWith, switchMap, takeUntil } from 'rxjs';
-import { checkIfValueIsGoodForEditClient, countryValidator, isValueDefined } from '../../util-components/util-methods/util-methods';
+import { Observable, Subject, catchError, debounceTime, filter, firstValueFrom, map, of, startWith, switchMap, takeUntil } from 'rxjs';
+import { checkIfValueIsGoodForEditClient, cityValidator, countryValidator, isValueDefined } from '../../util-components/util-methods/util-methods';
 import { ClientServiceApi } from '../../services/client/client-api.service';
 import { AccountDto, CityDto, CountryDto, OpenAccountDto, ResponseDto, SaveClientDataDto } from '../../util-components/dto/dto-interfaces';
 import { DatePipe } from '@angular/common';
@@ -15,7 +15,9 @@ import { YesNoDialogComponent } from '../../dialogs/yes-no-dialog/yes-no-dialog.
 import { AccountApiService } from '../../services/account/account-api.service';
 import { OpenNewAccountDialogComponent } from '../../dialogs/open-new-account-dialog/open-new-account-dialog.component';
 import { UserService } from '../../services/user/user.service';
+import { ToastrService } from 'ngx-toastr';
 
+export let exportCountry: number | undefined = undefined;
 
 @Component({
   selector: 'app-clients-detail',
@@ -68,7 +70,8 @@ export class ClientsDetailComponent implements OnInit {
     private datePipe: DatePipe,
     public dialog: MatDialog,
     private _accountApiService: AccountApiService,
-    private _userService: UserService
+    private _userService: UserService,
+    private toastr: ToastrService
   ) {
     this.clientFormGroup = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -80,7 +83,7 @@ export class ClientsDetailComponent implements OnInit {
       parentName: [''],
       streetName: ['', [Validators.required, Validators.minLength(3)]],
       streetNumber: ['', [Validators.required, Validators.min(0), Validators.pattern('^[0-9]*$')]],
-      city: ['', Validators.required],
+      city: ['', Validators.required, cityValidator],
       country: ['', Validators.required, countryValidator],
       pttNumber: ['', Validators.required],
       phoneNumber: ['', [Validators.required, Validators.minLength(9)]],
@@ -155,15 +158,20 @@ export class ClientsDetailComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (resp) => {
-          this.clientDetails = resp.object;
-          this.clientStatus = this.clientDetails?.status === 'A' ? 'ACTIVE' : 'CLOSED';
-          this.clientSex = this.clientDetails?.sex;
-          this.ACCOUNT_DATA = resp.object.openAccountDtoList;
-          this.dataSourceAccount = new MatTableDataSource(this.ACCOUNT_DATA);
-          this.fillUpFields();
-          this.chechFormsForDisabeling();
+          if (!isValueDefined(resp.errorMessage)) {
+            this.clientDetails = resp.object;
+            this.clientStatus = this.clientDetails?.status === 'A' ? 'ACTIVE' : 'CLOSED';
+            this.clientSex = this.clientDetails?.sex;
+            this.ACCOUNT_DATA = resp.object.openAccountDtoList;
+            this.dataSourceAccount = new MatTableDataSource(this.ACCOUNT_DATA);
+            this.fillUpFields();
+            this.chechFormsForDisabeling();
+
+          } else
+            this.toastr.error(resp.errorMessage, 'Error');
+
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -177,7 +185,7 @@ export class ClientsDetailComponent implements OnInit {
       takeUntil(this.unsubscribe$),
       map(resp => resp.filter(option => option.name!.toLowerCase().includes(filterValue))),
       catchError(error => {
-        console.error(error);
+        this.toastr.error(error?.error?.message, 'Error');
         return of([]);
       })
     );
@@ -196,7 +204,7 @@ export class ClientsDetailComponent implements OnInit {
         takeUntil(this.unsubscribe$),
         map(resp => resp.filter(option => option.name!.toLowerCase().includes(filterValue))),
         catchError(error => {
-          console.error(error);
+          this.toastr.error(error?.error?.message, 'Error');
           return of([]);
         })
       );
@@ -237,7 +245,7 @@ export class ClientsDetailComponent implements OnInit {
     }
   }
 
-  fillUpFields() {
+  async fillUpFields() {
     this.clientFormGroup.get('name')?.setValue(this.clientDetails?.name);
     this.clientFormGroup.get('lastName')?.setValue(this.clientDetails?.lastName);
     this.clientFormGroup.get('dateOfBirth')?.setValue(this.clientDetails?.dateOfBirth);
@@ -247,7 +255,7 @@ export class ClientsDetailComponent implements OnInit {
     this.clientFormGroup.get('parentName')?.setValue(this.clientDetails?.parentName);
     this.clientFormGroup.get('streetName')?.setValue(this.clientDetails?.streetName);
     this.clientFormGroup.get('streetNumber')?.setValue(this.clientDetails?.streetNumber);
-    this.clientFormGroup.get('city')?.setValue(this.clientDetails?.city);
+    this.clientFormGroup.get('city')?.setValue(await this.setCity(this.clientDetails?.city));
     this.cityId = this.clientDetails?.cityId;
     this.setCountryFromRedis(this.clientFormGroup.get('country'));
     this.countryId = this.clientDetails?.countryId;
@@ -260,12 +268,23 @@ export class ClientsDetailComponent implements OnInit {
     this.fillOriginalValues();
   }
 
+  async setCity(city: any) {
+    const cityLowerCase = city.toLowerCase();
+    const cityValue = await firstValueFrom(this._clientServiceApi.getCitiesFromRedis(cityLowerCase));
+
+    if (cityValue.length > 0)
+      return cityValue[0];
+
+    return city;
+  }
+
   setCountryFromRedis(countryFormControll: any) {
     this._filterCountry(this.clientDetails?.country ?? '')
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (resp) => {
           countryFormControll.setValue(resp[0]);
+          exportCountry = resp[0]?.id;
         }
       });
   }
@@ -301,19 +320,23 @@ export class ClientsDetailComponent implements OnInit {
 
     dialogRef.afterClosed().pipe(takeUntil(this.unsubscribe$))
       .subscribe({
-        next: (resp) => {
-          if (resp) {
-            if (checkIfValueIsGoodForEditClient(this.originalValues, this.clientFormGroup)) {
-              this._clientServiceApi.editClient(this.mappedRequest(), Number(this.clientId))
-                .pipe(takeUntil(this.unsubscribe$))
-                .subscribe({
-                  next: (resp) => {
-                    this.getClientDetaildData(resp.clientId.toString())
-                  }, error: (err) => {
-                    console.error(err);
-                  }
-                });
-            }
+        next: () => {
+          if (checkIfValueIsGoodForEditClient(this.originalValues, this.clientFormGroup)) {
+            this._clientServiceApi.editClient(this.mappedRequest(), Number(this.clientId))
+              .pipe(takeUntil(this.unsubscribe$))
+              .subscribe({
+                next: (resp) => {
+                  if (!isValueDefined(resp.errorMessage)) {
+                    this.getClientDetaildData(resp.clientId.toString());
+                    this.toastr.success('The client was modified successfully.', 'Success');
+
+                  } else
+                    this.toastr.error(resp.errorMessage, 'Error');
+
+                }, error: (err) => {
+                  this.toastr.error(err?.error?.message, 'Error');
+                }
+              });
           }
         }
       });
@@ -374,8 +397,9 @@ export class ClientsDetailComponent implements OnInit {
           if (resp) {
             this.reopenClient();
           }
+
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -391,9 +415,13 @@ export class ClientsDetailComponent implements OnInit {
         next: (resp) => {
           if (isValueDefined(resp.clientId)) {
             this.getClientDetaildData(resp.clientId.toString());
-          }
+            this.toastr.success('The client reopened successfully.', 'Success');
+
+          } else
+            this.toastr.error(resp.errorMessage, 'Error');
+
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -414,8 +442,9 @@ export class ClientsDetailComponent implements OnInit {
           if (resp) {
             this.closeClient();
           }
+
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err, 'Error');
         }
       });
   }
@@ -425,9 +454,15 @@ export class ClientsDetailComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (resp) => {
-          this.getClientDetaildData(resp.clientId.toString())
+          if (!isValueDefined(resp.errorMessage)) {
+            this.getClientDetaildData(resp.clientId.toString());
+            this.toastr.success('The client closed successfully.', 'Success');
+
+          } else 
+            this.toastr.error(resp.errorMessage, 'Error');
+
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -449,15 +484,22 @@ export class ClientsDetailComponent implements OnInit {
             this._accountApiService.closeAccount(accountId)
               .pipe(takeUntil(this.unsubscribe$))
               .subscribe({
-                next: () => {
-                  this.getClientDetaildData(this.clientId);
+                next: (resp) => {
+                  if (!isValueDefined(resp.errorMessage)) {
+                    this.getClientDetaildData(this.clientId);
+                    this.toastr.success('The account closed successfully.', 'Success');
+
+                  } else
+                    this.toastr.error(resp.errorMessage, 'Error');
+
                 }, error: (err) => {
-                  console.error(err);
+                  this.toastr.error(err?.error?.message, 'Error');
                 }
               });
           }
+
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -479,15 +521,22 @@ export class ClientsDetailComponent implements OnInit {
             this._accountApiService.reOpenAccount(accountId)
               .pipe(takeUntil(this.unsubscribe$))
               .subscribe({
-                next: () => {
-                  this.getClientDetaildData(this.clientId);
+                next: (resp) => {
+                  if (!isValueDefined(resp.errorMessage)) {
+                    this.getClientDetaildData(this.clientId);
+                    this.toastr.success('The account reopened successfully.', 'Success');
+
+                  } else
+                    this.toastr.error(resp.errorMessage, 'Error');
+
                 }, error: (err) => {
-                  console.error(err);
+                  this.toastr.error(err?.error?.message, 'Error');
                 }
               });
           }
+
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -558,15 +607,18 @@ export class ClientsDetailComponent implements OnInit {
               .subscribe({
                 next: (resp) => {
                   if (!isValueDefined(resp.errorMessage)) {
+                    this.toastr.success('Account opened successfully.', 'Success');
                     this.getClientDetaildData(this.clientId);
-                  }
+                  } else
+                  this.toastr.error(resp.errorMessage, 'Error');
+
                 }, error: (err) => {
-                  console.error(err);
+                  this.toastr.error(err?.error?.message, 'Error');
                 }
               });
           }
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -591,5 +643,40 @@ export class ClientsDetailComponent implements OnInit {
     else if (this.adminRole)
       return false;
     else return !this.accountRole;
+  }
+
+  setNewValueForExport(country: any) {
+    exportCountry = country?.id;
+    this.clientFormGroup.get('city')?.updateValueAndValidity();
+  }
+
+  errorControll(formControll: any) {
+    let errMsg = '';
+    if (isValueDefined(formControll)) {
+      const errors = formControll?.errors;
+
+      if (this.checkErrors(errors['required']))
+        errMsg += 'Input is required\n';
+      if (this.checkErrors(errors['minlength'])) {
+        const value = errors['minlength']?.requiredLength;
+        errMsg += `Minimum length is ${value} characters\n`;
+      }
+      if (this.checkErrors(errors['pattern']))
+        errMsg += `Only numbers allowed\n`;
+      if (this.checkErrors(errors['needsToBePickedFromTheList']))
+        errMsg += `Needs to be picked from list\n`;
+      if (this.checkErrors(errors['email']))
+        errMsg += `Email input needed\n`;
+      if (this.checkErrors(errors['min'])) {
+        const value = errors['min']?.min;
+        errMsg += `Minimum is ${value}\n`;
+      }
+    }
+
+    return errMsg;
+  }
+
+  checkErrors(formControllErrors: any) {
+    return formControllErrors !== undefined && formControllErrors !== null;
   }
 }

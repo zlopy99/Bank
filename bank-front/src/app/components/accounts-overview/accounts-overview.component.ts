@@ -7,6 +7,7 @@ import { Subject, filter, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { isValueDefined } from '../../util-components/util-methods/util-methods';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -45,7 +46,11 @@ export class AccountsOverviewComponent {
   }
   loader = false;
 
-  constructor(private _accountApiService: AccountApiService, private activatedRoute: ActivatedRoute) {
+  constructor(
+    private _accountApiService: AccountApiService, 
+    private activatedRoute: ActivatedRoute, 
+    private toastr: ToastrService
+  ) {
     this.activatedRoute.queryParamMap.pipe(
       filter(params => params.has('clientId') || params.has('accountId'))
     ).subscribe(params => {
@@ -57,7 +62,7 @@ export class AccountsOverviewComponent {
       }
     }
     );
-   }
+  }
 
   setPaginatorAndSort() {
     this.dataSourceAccount.paginator = this.paginator;
@@ -85,14 +90,16 @@ export class AccountsOverviewComponent {
             this.dataSourceAccount = new MatTableDataSource(this.ACCOUNT_DATA);
             this.setPaginatorAndSort();
             this.loader = false;
+            
           }, error: (err) => {
-            console.error(err);
+            this.toastr.error(err?.error?.message, 'Error');
             this.showTable = false;
             this.loader = false;
           }
-        })
+        });
+
     } else {
-      console.log('Treba iskočiti poruka koja kaže da je minimalno 3 znaka potrebno');
+      this.toastr.info('Minimum 3 characters need to be entered.', 'Info');
       this.showTable = false;
       this.loader = false;
     }

@@ -29,7 +29,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { ClientLogComponent } from './components/banker-detail/client-log/client-log.component';
 import { AccountLogComponent } from './components/banker-detail/account-log/account-log.component';
 import { provideRouter, withViewTransitions } from '@angular/router';
-import { routes } from './modules/app-routing.module'
+import { routes } from './modules/app-routing.module';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { routes } from './modules/app-routing.module'
     UtilComponentModule,
     FormsModule,
     HttpClientModule,
-    MatIconModule
+    MatIconModule,
+    ToastrModule.forRoot(),
   ],
   providers: [
     ChartService,

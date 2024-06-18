@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { jwtDecode } from "jwt-decode";
 import { isValueDefined } from '../../util-components/util-methods/util-methods';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class UserService {
 
   constructor(
     private router: Router,
-    private _userApiService: UserApiService
+    private _userApiService: UserApiService,
+    private toastr: ToastrService
   ) { }
 
   private setValueForLogedInUser(): boolean {
@@ -33,7 +35,7 @@ export class UserService {
           this.router.navigate(['/login']);
 
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }

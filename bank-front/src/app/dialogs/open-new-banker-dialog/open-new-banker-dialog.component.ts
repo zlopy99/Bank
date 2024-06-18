@@ -4,6 +4,7 @@ import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RoleList, roleList } from '../../util-components/enums/roleList';
 import { UserDto } from '../../util-components/dto/dto-interfaces';
+import { isValueDefined } from '../../util-components/util-methods/util-methods';
 
 @Component({
   selector: 'app-open-new-banker-dialog',
@@ -56,5 +57,35 @@ export class OpenNewBankerDialogComponent {
       const file = event.target.files[0];
       this.selectedFile = file;
     }
+  }
+
+  errorControll(formControll: any) {
+    let errMsg = '';
+    if (isValueDefined(formControll)) {
+      const errors = formControll?.errors;
+
+      if (this.checkErrors(errors['required']))
+        errMsg += 'Input is required\n';
+      if (this.checkErrors(errors['minlength'])) {
+        const value = errors['minlength']?.requiredLength;
+        errMsg += `Minimum length is ${value} characters\n`;
+      }
+      if (this.checkErrors(errors['pattern']))
+        errMsg += `Only numbers allowed\n`;
+      if (this.checkErrors(errors['needsToBePickedFromTheList']))
+        errMsg += `Needs to be picked from list\n`;
+      if (this.checkErrors(errors['email']))
+        errMsg += `Email input needed\n`;
+      if (this.checkErrors(errors['min'])) {
+        const value = errors['min']?.min;
+        errMsg += `Minimum is ${value}\n`;
+      }
+    }
+
+    return errMsg;
+  }
+
+  checkErrors(formControllErrors: any) {
+    return formControllErrors !== undefined && formControllErrors !== null;
   }
 }

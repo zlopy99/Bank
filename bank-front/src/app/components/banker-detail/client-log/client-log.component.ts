@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { UserApiService } from '../../../services/user/user-api.service';
 import { firstValueFrom } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-client-log',
@@ -27,13 +28,15 @@ export class ClientLogComponent implements OnInit {
     this.setPaginatorAndSort();
   }
 
-  constructor(private _userApiService: UserApiService) {
+  constructor(private _userApiService: UserApiService, private toastr: ToastrService) {
 
   }
 
   async ngOnInit() {
     const clientLog = await firstValueFrom(this._userApiService.getLogDataClient(this.userEmail))
-      .catch(error => console.error(error));
+      .catch(error => {
+        this.toastr.error(error?.error?.message, 'Error');
+      });
 
     this.USER_DATA = clientLog ?? [];
     this.dataSource = new MatTableDataSource(this.USER_DATA);

@@ -9,6 +9,9 @@
                             Parent name
                         </mat-label>
                         <input matInput type="text" formControlName="parentName">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('parentName')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('parentName'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -17,6 +20,9 @@
                             Street name
                         </mat-label>
                         <input matInput type="text" formControlName="streetName">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('streetName')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('streetName'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -25,6 +31,9 @@
                             Street number
                         </mat-label>
                         <input matInput type="number" min="0" formControlName="streetNumber">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('streetNumber')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('streetNumber'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -34,12 +43,15 @@
                         <mat-label>
                             Country
                         </mat-label>
-                        <input matInput type="text" formControlName="country" [matAutocomplete]="autoCountry">
+                        <input matInput type="text" formControlName="country" [matAutocomplete]="autoCountry" (change)="checkCountryForExport()">
                         <mat-autocomplete #autoCountry="matAutocomplete" [displayWith]="displayCounteries">
                             @for (option of filteredCountryOptions | async; track option) {
-                              <mat-option [value]="option">{{ option.name }}</mat-option>
+                              <mat-option [value]="option" (click)="checkCountryForExport()">{{ option.name }}</mat-option>
                             }
                           </mat-autocomplete>
+                          <mat-error *ngIf="checkErrors(this.clientFormGroup.get('country')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('country'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -53,6 +65,9 @@
                               <mat-option [value]="option">{{ option.name }}</mat-option>
                             }
                           </mat-autocomplete>
+                          <mat-error *ngIf="checkErrors(this.clientFormGroup.get('city')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('city'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -61,6 +76,9 @@
                             Ptt number
                         </mat-label>
                         <input matInput type="text" formControlName="pttNumber">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('pttNumber')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('pttNumber'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -71,6 +89,9 @@
                             Phone number
                         </mat-label>
                         <input matInput type="text" formControlName="phoneNumber" (change)="onContactChange()">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('phoneNumber')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('phoneNumber'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -79,6 +100,9 @@
                             Mobile number
                         </mat-label>
                         <input matInput type="text" formControlName="mobileNumber" (change)="onContactChange()">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('mobileNumber')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('mobileNumber'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-md-4">
@@ -87,6 +111,9 @@
                             Email
                         </mat-label>
                         <input matInput type="text" formControlName="email" (change)="onContactChange()">
+                        <mat-error *ngIf="checkErrors(this.clientFormGroup.get('email')?.errors)">
+                            {{errorControll(this.clientFormGroup.get('email'))}}
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>

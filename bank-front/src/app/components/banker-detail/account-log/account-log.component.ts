@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AccountLogDto } from '../../../util-components/dto/dto-interfaces';
 import { UserApiService } from '../../../services/user/user-api.service';
 import { firstValueFrom } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-account-log',
@@ -27,13 +28,15 @@ export class AccountLogComponent implements OnInit {
     this.setPaginatorAndSort();
   }
 
-  constructor(private _userApiService: UserApiService) {
+  constructor(private _userApiService: UserApiService, private toastr: ToastrService) {
 
   }
 
   async ngOnInit() {
     const accountLog = await firstValueFrom(this._userApiService.getLogDataAccount(this.userEmail))
-      .catch(error => console.error(error));
+      .catch(error => {
+        this.toastr.error(error?.error?.message, 'Error');
+      });
 
     this.USER_DATA = accountLog ?? [];
     this.dataSource = new MatTableDataSource(this.USER_DATA);

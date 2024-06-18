@@ -9,6 +9,7 @@ import { ClientServiceApi } from '../../services/client/client-api.service';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { isValueDefined } from '../../util-components/util-methods/util-methods';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-clients-overview',
@@ -50,7 +51,8 @@ export class ClientsOverviewComponent implements OnDestroy {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private _clientServiceApi: ClientServiceApi
+    private _clientServiceApi: ClientServiceApi,
+    private toastr: ToastrService
   ) { 
     this.activatedRoute.queryParamMap.pipe(
       filter(params => params.has('inputValue') || params.has('clientId'))
@@ -96,14 +98,16 @@ export class ClientsOverviewComponent implements OnDestroy {
             this.dataSourceClient = new MatTableDataSource(this.CLIENT_DATA);
             this.setPaginatorAndSort();
             this.loader = false;
+
           }, error: (err) => {
-            console.error(err);
+            this.toastr.error(err?.error?.message, 'Error');
             this.showTable = false;
             this.loader = false;
           }
-        })
+        });
+
     } else {
-      console.log('Treba iskočiti poruka koja kaže da je minimalno 3 znaka potrebno');
+      this.toastr.info('Minimum 3 characters need to be entered.', 'Info');
       this.showTable = false;
       this.loader = false;
     }

@@ -3,6 +3,7 @@ import { ChartService } from '../../services/chart/chart.service';
 import { ClientServiceApi } from '../../services/client/client-api.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AccountDto, ClientAccountDto, ClientDto } from '../../util-components/dto/dto-interfaces';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 	selector: 'app-home',
@@ -24,15 +25,17 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private _chartService: ChartService,
-		private _clientApiService: ClientServiceApi
+		private _clientApiService: ClientServiceApi,
+		private toastr: ToastrService
 	) {
 		this.columnChartOptions = this._chartService.setColumnChartOptions()
 		.pipe(takeUntil(this.unsubscribe$))
 		.subscribe({
 			next: (resp) => {
 				this.columnChartOptions = resp;
+
 			}, error: (err) => {
-				console.error(err);
+				this.toastr.error(err?.error?.message, 'Error');
 			}
 		});
 		this.lineChartOptions = this._chartService.setLineChartOptions()
@@ -42,7 +45,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 				this.lineChartOptions = resp;
 			},
 			error: (err) => {
-				console.error(err);
+				this.toastr.error(err?.error?.message, 'Error');
 			}
 		});
 		this._chartService.setPieChartOptions()
@@ -52,7 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 				this.pieChartOptions = resp;
 			},
 			error: (err) => {
-				console.error(err);
+				this.toastr.error(err?.error?.message, 'Error');
 			}
 		});
 	}
@@ -66,7 +69,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 					await this.setClientAndAccountFirstFiveTables();
 				},
 				error: (error) => {
-					console.error(error);
+					this.toastr.error(error?.error?.message, 'Error');
 				}
 			})
 	}

@@ -4,9 +4,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
 import { Observable, Subject, catchError, debounceTime, map, of, startWith, switchMap, takeUntil } from 'rxjs';
-import { countryValidator, isValueDefined } from '../../util-components/util-methods/util-methods';
+import { cityValidatorForOpening, countryValidator, isValueDefined } from '../../util-components/util-methods/util-methods';
 import { ClientServiceApi } from '../../services/client/client-api.service';
 import { CityDto, CountryDto } from '../../util-components/dto/dto-interfaces';
+import { ToastrService } from 'ngx-toastr';
+
+export let countryExportFromDialog: number | undefined = undefined;
 
 @Component({
   selector: 'app-open-new-client-detail-dialog',
@@ -24,13 +27,14 @@ export class OpenNewClientDetailDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private datePipe: DatePipe,
-    private _clientServiceApi: ClientServiceApi
+    private _clientServiceApi: ClientServiceApi,
+    private toastr: ToastrService
   ) {
     this.clientFormGroup = this.fb.group({
       parentName: [''],
       streetName: ['', [Validators.required, Validators.minLength(3)]],
       streetNumber: ['', [Validators.required, Validators.min(0), Validators.pattern('^[0-9]*$')]],
-      city: ['', Validators.required],
+      city: ['', Validators.required, cityValidatorForOpening],
       country: ['', Validators.required, countryValidator],
       pttNumber: ['', Validators.required],
       phoneNumber: ['', [Validators.required, Validators.minLength(9)]],
@@ -66,7 +70,7 @@ export class OpenNewClientDetailDialogComponent implements OnInit {
       takeUntil(this.unsubscribe$),
       map(resp => resp.filter(option => option.name!.toLowerCase().includes(filterValue))),
       catchError(error => {
-        console.error(error);
+        this.toastr.error(error?.error?.message, 'Error');
         return of([]);
       })
     );
@@ -84,7 +88,7 @@ export class OpenNewClientDetailDialogComponent implements OnInit {
         takeUntil(this.unsubscribe$),
         map(resp => resp.filter(option => option.name!.toLowerCase().includes(filterValue))),
         catchError(error => {
-          console.error(error);
+          this.toastr.error(error?.error?.message, 'Error');
           return of([]);
         })
       );
@@ -160,5 +164,40 @@ export class OpenNewClientDetailDialogComponent implements OnInit {
 
   closeDialog() {
     this.dialogRef.close();
+  }
+
+  errorControll(formControll: any) {
+    let errMsg = '';
+    if (isValueDefined(formControll)) {
+      const errors = formControll?.errors;
+
+      if (this.checkErrors(errors['required']))
+        errMsg += 'Input is required\n';
+      if (this.checkErrors(errors['minlength'])) {
+        const value = errors['minlength']?.requiredLength;
+        errMsg += `Minimum length is ${value} characters\n`;
+      }
+      if (this.checkErrors(errors['pattern']))
+        errMsg += `Only numbers allowed\n`;
+      if (this.checkErrors(errors['needsToBePickedFromTheList']))
+        errMsg += `Needs to be picked from list\n`;
+      if (this.checkErrors(errors['email']))
+        errMsg += `Email input needed\n`;
+      if (this.checkErrors(errors['min'])) {
+        const value = errors['min']?.min;
+        errMsg += `Minimum is ${value}\n`;
+      }
+    }
+
+    return errMsg;
+  }
+
+  checkErrors(formControllErrors: any) {
+    return formControllErrors !== undefined && formControllErrors !== null;
+  }
+
+  checkCountryForExport() {
+    countryExportFromDialog = this.clientFormGroup.get('country')?.getRawValue()?.id;
+    this.clientFormGroup.get('city')?.updateValueAndValidity();
   }
 }

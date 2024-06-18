@@ -1,5 +1,7 @@
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { SaveClientDataDto } from "../dto/dto-interfaces";
+import { exportCountry } from '../../components/clients-detail/clients-detail.component';
+import { countryExportFromDialog } from '../../dialogs/open-new-client-detail-dialog/open-new-client-detail-dialog.component';
 
 export function isValueDefined(value: any): boolean {
     if (value !== undefined && value !== '' && value !== null)
@@ -36,6 +38,36 @@ export function countryValidator(control: AbstractControl): Promise<ValidationEr
             } else {
                 resolve(null);
             }
+        }, 500);
+    });
+}
+
+export function cityValidator(control: AbstractControl): Promise<ValidationErrors | null> {
+
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            if (exportCountry === 22) {
+                if (typeof control.value === 'string') {
+                    resolve({ needsToBePickedFromTheList: true });
+                } else {
+                    resolve(null);
+                }
+            } else resolve(null);
+        }, 500);
+    });
+}
+
+export function cityValidatorForOpening(control: AbstractControl): Promise<ValidationErrors | null> {
+
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            if (countryExportFromDialog === 22) {
+                if (typeof control.value === 'string') {
+                    resolve({ needsToBePickedFromTheList: true });
+                } else {
+                    resolve(null);
+                }
+            } else resolve(null);
         }, 500);
     });
 }

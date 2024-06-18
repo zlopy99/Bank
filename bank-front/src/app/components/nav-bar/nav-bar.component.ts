@@ -12,6 +12,7 @@ import { AccountApiService } from '../../services/account/account-api.service';
 import { UserApiService } from '../../services/user/user-api.service';
 import { UserService } from '../../services/user/user.service';
 import { OpenNewBankerDialogComponent } from '../../dialogs/open-new-banker-dialog/open-new-banker-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav-bar',
@@ -36,7 +37,8 @@ export class NavBarComponent implements OnDestroy {
     private _clientServiceApi: ClientServiceApi,
     private _accountServiceApi: AccountApiService,
     private _userApiService: UserApiService,
-    private _userService: UserService
+    private _userService: UserService,
+    private toastr: ToastrService
   ) {
     this.setUserPathVisibility();
    }
@@ -94,7 +96,7 @@ export class NavBarComponent implements OnDestroy {
             this.goToSecondPartOfOpening();
           }
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -115,16 +117,22 @@ export class NavBarComponent implements OnDestroy {
               .pipe(takeUntil(this.unsubscribe$))
               .subscribe({
                 next: (resp) => {
-                  this.router.navigate(['clients'], { queryParams: { clientId: resp.clientId } })
-                  .then( () => this.router.navigate(['clients/detail'], { queryParams: { clientId: resp.clientId } }));
+                  if (!isValueDefined(resp.errorMessage)) {
+                    this.toastr.success('Client was opened successfully.', 'Success');
+                    this.router.navigate(['clients'], { queryParams: { clientId: resp.clientId } })
+                    .then( () => this.router.navigate(['clients/detail'], { queryParams: { clientId: resp.clientId } }));
+
+                  } else
+                    this.toastr.error(resp.errorMessage, 'Error');
                 },
+
                 error: (err) => {
-                  console.error(err);
+                  this.toastr.error(err?.error?.message, 'Error');
                 }
               });
           }
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -160,23 +168,22 @@ export class NavBarComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (resp) => {
-          console.log(resp);
           if (isValueDefined(resp)) {
             const newUserDto = resp;
             this._userApiService.createUser(newUserDto)
               .pipe(takeUntil(this.unsubscribe$))
               .subscribe({
-                next: (resp) => {
-                  console.log(resp);
+                next: () => {
+                  this.toastr.success('User created successfully.', 'Success');
 
                 }, error: (err) => {
-                  console.error(err);
+                  this.toastr.error(err?.error?.message, 'Error');
                 }
               });
           }
 
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err?.error?.message, 'Error');
         }
       });
   }
@@ -198,16 +205,20 @@ export class NavBarComponent implements OnDestroy {
               .subscribe({
                 next: (resp) => {
                   if (!isValueDefined(resp.errorMessage)) {
+                    this.toastr.success('Account opened successfully.', 'Success');
                     this.router.navigate(['clients'], { queryParams: { clientId: resp.clientId } })
                     .then( () => this.router.navigate(['clients/detail'], { queryParams: { clientId: resp.clientId } }));
-                  }
+
+                  } else
+                    this.toastr.error(resp.errorMessage, 'Error');
+                    
                 }, error: (err) => {
-                  console.error(err);
+                  this.toastr.error(err, 'Error');
                 }
               });
           }
         }, error: (err) => {
-          console.error(err);
+          this.toastr.error(err, 'Error');
         }
       });
   }

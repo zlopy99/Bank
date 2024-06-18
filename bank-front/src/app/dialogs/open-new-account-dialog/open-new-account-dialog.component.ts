@@ -21,7 +21,7 @@ export class OpenNewAccountDialogComponent {
     public dialogRef: MatDialogRef<NavBarComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private datePipe: DatePipe,
+    private datePipe: DatePipe
   ) {
     this.accountFormGroup = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -47,5 +47,35 @@ export class OpenNewAccountDialogComponent {
 
   closeDialog() {
     this.dialogRef.close();
+  }
+
+  errorControll(formControll: any) {
+    let errMsg = '';
+    if (isValueDefined(formControll)) {
+      const errors = formControll?.errors;
+
+      if (this.checkErrors(errors['required']))
+        errMsg += 'Input is required\n';
+      if (this.checkErrors(errors['minlength'])) {
+        const value = errors['minlength']?.requiredLength;
+        errMsg += `Minimum length is ${value} characters\n`;
+      }
+      if (this.checkErrors(errors['pattern']))
+        errMsg += `Only numbers allowed\n`;
+      if (this.checkErrors(errors['needsToBePickedFromTheList']))
+        errMsg += `Needs to be picked from list\n`;
+      if (this.checkErrors(errors['email']))
+        errMsg += `Email input needed\n`;
+      if (this.checkErrors(errors['min'])) {
+        const value = errors['min']?.min;
+        errMsg += `Minimum is ${value}\n`;
+      }
+    }
+
+    return errMsg;
+  }
+
+  checkErrors(formControllErrors: any) {
+    return formControllErrors !== undefined && formControllErrors !== null;
   }
 }
