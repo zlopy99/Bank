@@ -46,10 +46,16 @@ public class RedisDataLoader implements ApplicationRunner {
     }
 
     private void flushAllFromMyRedisDb() {
-        redisTemplate.execute((RedisCallback<Object>) connection -> {
-            connection.serverCommands().flushDb();
-            return null;
-        });
+        try {
+            redisTemplate.execute((RedisCallback<Object>) connection -> {
+                connection.serverCommands().flushDb();
+                return null;
+            });
+        } catch (Exception e) {
+            String errMsg = "Error at clearing redis: ";
+            log.error(errMsg, e);
+            throw new ApiRequestException(errMsg + e.getMessage());
+        }
     }
 
     protected void lastFiveClientsAndAccountsDropAndFill() {

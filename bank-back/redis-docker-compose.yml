@@ -2,53 +2,56 @@ version: "3.8"
 services:
   postgres:
     image: postgres:latest
-    container_name: my_postgres
+    container_name: my_postgres_con
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
       POSTGRES_DB: bank
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
-  redis:
-    image: redis:6.0.7
-    container_name: redis
-    restart: always
-    volumes:
-      - redis_volume_data:/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: my_pgadmin_con
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
     ports:
-      - "6379:6379"
+      - "5050:80"
+    depends_on:
+      - postgres
 
   server:
     build:
       context: .
       dockerfile: Dockerfile
     image: bank-server
-    container_name: bank
+    container_name: bank_con
     ports:
       - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/bank
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_USERNAME=ENC(boc/rY2APJ/7xLVQC0lJpOczjZukE2mQaQVPb6Q74tNWiNFHgU4HpGi4xMujokkx)
+      - SPRING_DATASOURCE_PASSWORD=ENC(w+ShKo2AiR9Cshik9LAE2oOyvSq++I7jo8A8xA+ggUjBekol6kla8Fewwa8WYzeZ)
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
+      - jwt_secret_key=secretJwtKey
+      - JAVA_TOOL_OPTIONS=-Djasypt.encryptor.password=secretDbKey
     depends_on:
       - redis
       - postgres
 
-  redis_insight:
-    image: redislabs/redisinsight:latest
-    container_name: redis_insight
+  redis:
+    image: redis
+    container_name: redis_con
     restart: always
     ports:
-      - "8001:8001"
-    volumes:
-      - redis_insight_volume_data:/db
+      - "6379:6379"
 
-volumes:
-  redis_volume_data:
-  redis_insight_volume_data:
-  postgres_data:
+  redis_insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis_insight_con
+    ports:
+      - "8001:8001"
+    depends_on:
+      - redis

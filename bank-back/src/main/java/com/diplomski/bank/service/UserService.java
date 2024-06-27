@@ -15,6 +15,8 @@ import com.diplomski.bank.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -69,7 +72,9 @@ public class UserService {
 
     private void setImageForUser(Users user, MultipartFile file) throws IOException {
         if (file == null) {
-            byte[] bytes = Files.readAllBytes(Paths.get("src/main/resources/images/blank.png"));
+            Resource resource = new ClassPathResource("images/blank.png");
+            InputStream inputStream = resource.getInputStream();
+            byte[] bytes = inputStream.readAllBytes();
             user.setImage(UserUtil.compressImage(bytes));
             user.setImageName("blank");
 
