@@ -35,8 +35,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=ENC(w+ShKo2AiR9Cshik9LAE2oOyvSq++I7jo8A8xA+ggUjBekol6kla8Fewwa8WYzeZ)
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
-      - jwt_secret_key=secretJwtKey
-      - JAVA_TOOL_OPTIONS=-Djasypt.encryptor.password=secretDbKey
+      - jwt_secret_key=${jwt_secret_key}
+      - JAVA_TOOL_OPTIONS=-Djasypt.encryptor.password=${JASYPT_PASSWORD}
     depends_on:
       - redis
       - postgres
