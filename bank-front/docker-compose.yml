@@ -1,0 +1,10 @@
+version: '3'
+services:
+  angular-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bank-front
+    container_name: bank-front_con
+    ports:
+      - '4200:4200'
