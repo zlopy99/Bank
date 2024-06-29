@@ -1,18 +1,11 @@
-# FROM node:20.9.0
-# WORKDIR /usr/src/app
-# COPY package*.json ./
-# RUN npm install
-# COPY . .
-# RUN npm install -g @angular/cli
-# RUN ng build --configuration production
-# EXPOSE 4200
-# CMD ["npm", "start"]
-
-FROM node:20.9.0 as node
+FROM node:20.9.0 as build
 WORKDIR /app
-COPY . .
+COPY package*.json ./
 RUN npm install
-RUN npm run build --prod
+RUN npx ngcc --properties es2024 browser module main --first-only --create-ivy-entry-points
+COPY . .
+RUN npm run build
 
-FROM nginx:alpine
-COPY --from=node /app/dist/bank /usr/share/nginx/html
+FROM nginx:stable
+COPY  --from=build /app/dist/bank/browser/ /usr/share/nginx/html
+EXPOSE 80

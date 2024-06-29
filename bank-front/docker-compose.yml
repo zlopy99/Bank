@@ -7,4 +7,4 @@ services:
     image: bank-front
     container_name: bank-front_con
     ports:
-      - '4200:4200'
+      - '4200:80'
