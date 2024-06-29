@@ -114,7 +114,6 @@ export class ChartService implements OnDestroy {
               type: "column",
               name: "Closed Clients",
               legendText: "Closed clients",
-              axisYType: "secondary",
               showInLegend: true,
               dataPoints: [
                 { label: new Date(0, 0).toLocaleString('default', { month: 'long' }), y: closed.find(obj => obj.groupby === 1)?.count ?? 0 },
