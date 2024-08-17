@@ -210,12 +210,18 @@ export class BankerDetailComponent {
   }
 
   checkForRoles() {
+    let originalData = true;
+    let newData = true;
     for (const value of this.formGroup.get('roles')?.getRawValue()) {
       if (this.userOriginalData.roles.find(item => item.id === value.id) === undefined)
-        return false;
+        newData = false;
+    }
+    for (const value of this.userOriginalData.roles) {
+      if (this.formGroup.get('roles')?.getRawValue().find((item: any) => item.id === value.id) === undefined)
+        originalData = false;
     }
 
-    return true;
+    return newData && originalData;
   }
 
   createUserDto() {

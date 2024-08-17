@@ -635,8 +635,16 @@ export class ClientsDetailComponent implements OnInit {
       this.router.navigate(['/accounts'], { queryParams: { clientId: row.clientId } });
   }
 
+  otherRolesAreFalse() {
+    return (
+      this.clientRole ||
+      this.accountRole ||
+      this.adminRole
+    );
+  }
+
   isOpenAccountDisabeld() {
-    if (this.clientObserverRole)
+    if (this.clientObserverRole && !this.otherRolesAreFalse())
       return true;
     else if (this.clientFormGroup.status === 'DISABLED' && this.clientStatus !== 'CLOSED')
       return false;
