@@ -36,6 +36,7 @@ public class RedisDataLoader implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        testRedisConnection();
         flushAllFromMyRedisDb();
         lastFiveClientsAndAccounts();
         fillRedisWithCountries();
@@ -43,6 +44,15 @@ public class RedisDataLoader implements ApplicationRunner {
         getAndSetOpenedAccountsInAMonth();
         getAndSetOpenedAndClosedClientsInAWeek();
         getAndSetOpenedAndClosedClientsInAYear();
+    }
+
+    public void testRedisConnection() {
+        try {
+            String response = redisTemplate.getConnectionFactory().getConnection().ping();
+            log.info("Redis connection successful: {}", response);
+        } catch (Exception e) {
+            log.error("Failed to connect to Redis: {}", e.getMessage());
+        }
     }
 
     private void flushAllFromMyRedisDb() {

@@ -1,10 +1,10 @@
-version: '3'
+version: '3.8'
 services:
-  angular-app:
+  bank-front:
     build:
       context: .
       dockerfile: Dockerfile
-    image: bank-front
-    container_name: bank-front_con
+    image: bank-application-front
+    container_name: bank-application-front-container
     ports:
-      - '4200:80'
+      - '4200:4200'
